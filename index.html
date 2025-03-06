@@ -11,6 +11,22 @@
             padding: 20px;
         }
 
+        .i1 {
+            margin-left: 2ch;
+        }
+
+        .i2 {
+            margin-left: 4ch;
+        }
+
+        .i3 {
+            margin-left: 6ch;
+        }
+
+        .i4 {
+            margin-left: 8ch;
+        }
+
         .container {
             display: flex;
             height: 100vh;
@@ -54,7 +70,9 @@
         }
 
         .eager,
-        .substitute {
+        .substitute,
+        .substitutionSimple,
+        .substitutionSimpleSpaces {
             display: none;
         }
 
@@ -83,10 +101,20 @@
             animation: highlight 10s forwards;
         }
 
-        /* When the inline toggle is checked, show inline text */
-        body:has(#toggleSubst:checked) .substitute {
+        body:has(#toggleSubstNaive:checked) .substitute,
+        body:has(#toggleSubstSimple:checked) .substitute,
+        body:has(#toggleSubstCaptureAvoiding:checked) .substitute {
             display: block;
             animation: highlight 10s forwards;
+        }
+
+        body:has(#toggleSubstSimple:checked) .substitutionSimple {
+            display: block;
+            animation: highlight 10s forwards;
+        }
+
+        body:has(#toggleSubstSimple:checked) .substitutionSimpleSpaces {
+            display: inline;
         }
 
         /* Keyframes animation: start green and transition to black */
@@ -110,7 +138,11 @@
         <label><input type="checkbox" id="toggleLet">Identifiers (Let + Id)</label><br>
         <div class="radio-group let">
             Id<br>
-            <label><input type="radio" name="substitution" id="toggleSubst" checked> Substitution</label><br>
+            <label><input type="radio" name="substitution" id="toggleSubstNaive" checked> Naive Substitution</label><br>
+            <label><input type="radio" name="substitution" id="toggleSubstSimple" checked> Simple
+                Substitution</label><br>
+            <label><input type="radio" name="substitution" id="toggleSubstCaptureAvoiding" checked> Capture-Avoiding
+                Substitution</label><br>
             <label><input type="radio" name="substitution" id="toggleEnv"> Environment</label><br>
         </div>
         <div class="radio-group let">
@@ -129,24 +161,24 @@
         <h2>Class</h2>
         <div class="code-container">
             <div>abstract class Expr</div>
-            <div>&nbsp;&nbsp;case class Num(n: Int) extends Expr</div>
-            <div class="arithmetic">&nbsp;&nbsp;case class Add(lhs: Expr, rhs: Expr) extends Expr</div>
-            <div class="arithmetic">&nbsp;&nbsp;case class Sub(lhs: Expr, rhs: Expr) extends Expr</div>
-            <div class="conditionals">&nbsp;&nbsp;case class If0(c: Expr, t: Expr, f: Expr) extends Expr</div>
-            <div class="let">&nbsp;&nbsp;case class Let(name: String, bound: Expr, body: Expr) extends Expr</div>
-            <div class="let">&nbsp;&nbsp;case class Id(name: String) extends Expr</div>
+            <div class="i1">case class Num(n: Int) extends Expr</div>
+            <div class="i1 arithmetic">case class Add(lhs: Expr, rhs: Expr) extends Expr</div>
+            <div class="i1 arithmetic">case class Sub(lhs: Expr, rhs: Expr) extends Expr</div>
+            <div class="i1 conditionals">case class If0(c: Expr, t: Expr, f: Expr) extends Expr</div>
+            <div class="i1 let">case class Let(name: String, bound: Expr, body: Expr) extends Expr</div>
+            <div class="i1 let">case class Id(name: String) extends Expr</div>
         </div>
 
         <h2>Interpreter</h2>
         <div class="code-container">
             <div>def interp(expr: Expr): Value = expr match {</div>
-            <div>&nbsp;&nbsp;case Num(n) => n</div>
-            <div class="arithmetic">&nbsp;&nbsp;case Add(lhs, rhs) => interp(lhs) + interp(rhs)</div>
-            <div class="arithmetic">&nbsp;&nbsp;case Sub(lhs, rhs) => interp(lhs) - interp(rhs)</div>
-            <div class="conditionals">&nbsp;&nbsp;case If0(c, t, f) => if (interp(c) == 0)</div>
-            <div class="conditionals">&nbsp;&nbsp;&nbsp;&nbsp;interp(t) else interp(f)</div>
-            <div class="let">&nbsp;&nbsp;case Id(name) => sys.error(s"found unbound id $name")</div>
-            <div class="let">&nbsp;&nbsp;case Let(boundId, namedExpr, boundExpr) => interp(subst(boundExpr,
+            <div class="i1">case Num(n) => n</div>
+            <div class="i1 arithmetic">case Add(lhs, rhs) => interp(lhs) + interp(rhs)</div>
+            <div class="i1 arithmetic">case Sub(lhs, rhs) => interp(lhs) - interp(rhs)</div>
+            <div class="i1 conditionals">case If0(c, t, f) => if (interp(c) == 0)</div>
+            <div class="i2 conditionals">interp(t) else interp(f)</div>
+            <div class="i1 let">case Id(name) => sys.error(s"found unbound id $name")</div>
+            <div class="i1 let">case Let(boundId, namedExpr, boundExpr) => interp(subst(boundExpr,
                 boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager">)</span>)))</div>
             <div>}</div>
         </div>
@@ -156,28 +188,29 @@
             <div>// Substitutes "substId" with "value" in "expr"</div>
             <div>// The resulting expression contains no free instances of the 2nd argument.</div>
             <div>def subst(expr: Expr, substId: String, value: Expr): Expr = expr match {</div>
-            <div>&nbsp;&nbsp;case Num(_) => expr</div>
-            <div class="arithmetic">&nbsp;&nbsp;case Add(lhs, rhs) => Add(subst(lhs, substId, value), subst(rhs,
+            <div class="i1">case Num(_) => expr</div>
+            <div class="i1 arithmetic">case Add(lhs, rhs) => Add(subst(lhs, substId, value), subst(rhs,
                 substId, value))
             </div>
-            <div class="arithmetic">&nbsp;&nbsp;case Sub(lhs, rhs) => Sub(subst(lhs, substId, value), subst(rhs,
+            <div class="i1 arithmetic">case Sub(lhs, rhs) => Sub(subst(lhs, substId, value), subst(rhs,
                 substId, value))
             </div>
-            <div class="conditionals">&nbsp;&nbsp;case If0(test, thenBody, elseBody) =></div>
-            <div class="conditionals">&nbsp;&nbsp;&nbsp;&nbsp;If0(subst(test, substId, value), subst(thenBody, substId,
+            <div class="i1 conditionals">case If0(test, thenBody, elseBody) =></div>
+            <div class="i2 conditionals">If0(subst(test, substId, value), subst(thenBody, substId,
                 value), subst(elseBody, substId, value))
             </div>
-            <div class="let">&nbsp;&nbsp;case Id(name) => if substId == name then value else expr</div>
-            <div class="let">&nbsp;&nbsp;case Let(boundId, namedExpr, boundExpr) =></div>
-            <div class="let">&nbsp;&nbsp;&nbsp;&nbsp;val substNamedExpr = subst(namedExpr, substId, value)</div>
-            <div class="let">&nbsp;&nbsp;&nbsp;&nbsp;if boundId == substId then</div>
-            <div class="let">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let(boundId, substNamedExpr, boundExpr)</div>
-            <div class="let">&nbsp;&nbsp;&nbsp;&nbsp;else</div>
-            <div class="let">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let(boundId, substNamedExpr, subst(boundExpr, substId,
-                value))</div>
-            <div>&nbsp;&nbsp;case App(funName, argExprs) =></div>
-            <div>&nbsp;&nbsp;&nbsp;&nbsp;val newArgs = argExprs.map(ex => subst(ex, substId, value))</div>
-            <div>&nbsp;&nbsp;&nbsp;&nbsp;App(funName, newArgs)</div>
+            <div class="i1 let">case Id(name) => if substId == name then value else expr</div>
+            <div class="i1 let">case Let(boundId, namedExpr, boundExpr) =></div>
+            <div class="i2 let">val substNamedExpr = subst(namedExpr, substId, value)</div>
+            <div class="i2 let substitutionSimple">if boundId == substId then</div>
+            <div class="i3 let substitutionSimple">Let(boundId, substNamedExpr,
+                boundExpr)</div>
+            <div class="i2 let substitutionSimple">else</div>
+            <div class="i2 let"><span class="substitutionSimpleSpaces">&nbsp;&nbsp;</span>Let(boundId,
+                substNamedExpr, subst(boundExpr, substId, value))</div>
+            <div class="i1 i1">case App(funName, argExprs) =></div>
+            <div class="i1 i2">val newArgs = argExprs.map(ex => subst(ex, substId, value))</div>
+            <div class="i1 i2">App(funName, newArgs)</div>
             <div>}</div>
         </div>
     </div>
