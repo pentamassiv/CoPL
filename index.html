@@ -65,7 +65,8 @@
 
         .arithmetic,
         .conditionals,
-        .let {
+        .let,
+        .functions {
             opacity: 0;
         }
 
@@ -131,6 +132,11 @@
             animation: highlight 10s forwards;
         }
 
+        body:has(#toggleFunctions:checked) .functions {
+            opacity: 1;
+            animation: highlight 10s forwards;
+        }
+
         /* Keyframes animation: start green and transition to black */
         @keyframes highlight {
             0% {
@@ -163,6 +169,13 @@
             Evaluation<br>
             <label><input type="radio" name="eagerEval" id="toggleEager" checked> Eager</label><br>
             <label><input type="radio" name="eagerEval" id="toggleLazy"> Lazy</label><br>
+        </div>
+
+        <label><input type="checkbox" id="toggleFunctions">Functions</label><br>
+        <div class="radio-group functions">
+            <label><input type="radio" name="functions" id="toggleFirstOrder" checked> First-Order</label><br>
+            <label><input type="radio" name="functions" id="toggleHigherOrder" checked> Higher-Order</label><br>
+            <label><input type="radio" name="functions" id="toggleHigherClass" checked> First-Class</label><br>
         </div>
     </div>
 
