@@ -44,7 +44,7 @@
         }
 
         .options-panel {
-            width: 250px;
+            width: 350px;
             background-color: #ddd;
             padding: 20px;
             border-left: 1px solid #bbb;
@@ -69,6 +69,11 @@
             opacity: 0;
         }
 
+        .substitutionFlawed,
+        .substitutionCorrect {
+            display: none;
+        }
+
         .eager,
         .substitute,
         .substitutionSimple,
@@ -76,26 +81,21 @@
             display: none;
         }
 
-
-        /* When the inline toggle is checked, show inline text */
         body:has(#toggleArithmetic:checked) .arithmetic {
             opacity: 1;
             animation: highlight 10s forwards;
         }
 
-        /* When the inline toggle is checked, show inline text */
         body:has(#toggleConditionals:checked) .conditionals {
             opacity: 1;
             animation: highlight 10s forwards;
         }
 
-        /* When the inline toggle is checked, show inline text */
         body:has(#toggleLet:checked) .let {
             opacity: 1;
             animation: highlight 10s forwards;
         }
 
-        /* When the inline toggle is checked, show inline text */
         body:has(#toggleEager:checked) .eager {
             display: inline;
             animation: highlight 10s forwards;
@@ -118,6 +118,17 @@
 
         body:has(#toggleSubstSimple:checked) .substitutionSimpleSpaces {
             display: inline;
+        }
+
+        body:has(#toggleSubstNaive:checked) .substitutionFlawed,
+        body:has(#toggleSubstSimple:checked) .substitutionFlawed {
+            display: block;
+            animation: highlight 10s forwards;
+        }
+
+        body:has(#toggleSubstCaptureAvoiding:checked) .substitutionCorrect {
+            display: block;
+            animation: highlight 10s forwards;
         }
 
         /* Keyframes animation: start green and transition to black */
@@ -187,7 +198,7 @@
         </div>
 
         <h2 class="substitute">Substitute</h2>
-        <div class="code-container substitute">
+        <div class="code-container substitutionFlawed">
             <div>// Substitutes "substId" with "value" in "expr"</div>
             <div>// The resulting expression contains no free instances of the 2nd argument.</div>
             <div>def subst(expr: Expr, substId: String, value: Expr): Expr = expr match {</div>
@@ -202,19 +213,66 @@
             <div class="i2 conditionals">If0(subst(test, substId, value), subst(thenBody, substId,
                 value), subst(elseBody, substId, value))
             </div>
-            <div class="i1 let">case Id(name) => if substId == name then value else expr</div>
-            <div class="i1 let">case Let(boundId, namedExpr, boundExpr) =></div>
-            <div class="i2 let">val substNamedExpr = subst(namedExpr, substId, value)</div>
-            <div class="i2 let substitutionSimple">if boundId == substId then</div>
-            <div class="i3 let substitutionSimple">Let(boundId, substNamedExpr,
+            <div class="i1">case Id(name) => if substId == name then value else expr</div>
+            <div class="i1">case Let(boundId, namedExpr, boundExpr) =></div>
+            <div class="i2">val substNamedExpr = subst(namedExpr, substId, value)</div>
+            <div class="i2 substitutionSimple">if boundId == substId then</div>
+            <div class="i3 substitutionSimple">Let(boundId, substNamedExpr,
                 boundExpr)</div>
-            <div class="i2 let substitutionSimple">else</div>
-            <div class="i2 let"><span class="substitutionSimpleSpaces">&nbsp;&nbsp;</span>Let(boundId,
+            <div class="i2 substitutionSimple">else</div>
+            <div class="i2"><span class="substitutionSimpleSpaces">&nbsp;&nbsp;</span>Let(boundId,
                 substNamedExpr, subst(boundExpr, substId, value))</div>
-            <div class="i1 i1">case App(funName, argExprs) =></div>
-            <div class="i1 i2">val newArgs = argExprs.map(ex => subst(ex, substId, value))</div>
-            <div class="i1 i2">App(funName, newArgs)</div>
+            <div class="i1">case App(funName, argExprs) =>//TODO: TOGGLE</div>
+            <div class="i2">val newArgs = argExprs.map(ex => subst(ex, substId, value))//TODO: TOGGLE</div>
+            <div class="i2">App(funName, newArgs)//TODO: TOGGLE</div>
             <div>}</div>
+        </div>
+
+        <div class="code-container substitutionCorrect">
+
+            <!-- subst -->
+            <div>def subst(expr: Expression, substId: String, value: Expression): Expression = expr match {
+            </div>
+            <div class="i1">case Id(name) => if substId == name then value else expr</div>
+            <div class="i1">case Fun(param, body) =></div>
+            <div class="i2">if param == substId</div>
+            <div class="i2">then Fun(param, body)</div>
+            <div class="i2">else if !freeVariables(value).contains(param)</div>
+            <div class="i2">then</div>
+            <div class="i3">Fun(param, subst(body, substId, value))</div>
+            <div class="i2">else</div>
+            <div class="i3">val potentialConflicts = freeVariables(value) union freeVariables(body)</div>
+            <div class="i3">val freshId = Id(freshName(param, potentialConflicts))</div>
+            <div class="i3">val alphaRenamed = subst(body, param, freshId)</div>
+            <div class="i3">Fun(freshId.name, subst(alphaRenamed, substId, value))</div>
+            <div class="i1">case App(funExpr, argExpr) =></div>
+            <div class="i2">App(subst(funExpr, substId, value), subst(argExpr, substId, value))</div>
+            <div>}</div>
+            <br>
+
+            <!-- freeVariables -->
+            <div>def freeVariables(expr: Expression): Set[String] = expr match {</div>
+            <div class="i1">case Num(_) => Set.empty</div>
+            <div class="i1 arithmetic">case Add(lhs, rhs) => freeVars(lhs) union freeVars(rhs)</div>
+            <div class="i1 arithmetic">case Sub(lhs, rhs) => freeVars(lhs) union freeVars(rhs)</div>
+            <div class="i1 conditionals">case If0(c, t, f) => freeVars(c) union freeVars(t) union freeVars(f) //TODO:
+                Probably wrong
+            </div>
+            <div class="i1">case Let(name, namedExpr, body) => (freeVars(namedExpr) - name) union freeVars(body)</div>
+            <div class="i1">case Id(x) => Set(x)</div>
+            <div class="i1">case Fun(param, body) => freeVariables(body) - param //TODO: TOGGLE</div>
+            <div class="i1">case App(e1, e2) => freeVariables(e1) ++ freeVariables(e2) //TODO: TOGGLE</div>
+            <div>}</div>
+            <br>
+
+            <!-- freshName -->
+            <div>def freshName(id: String, known: Set[String]): String =</div>
+            <div class="i1">def rec(count: Int): String =</div>
+            <div class="i2">val newName = s"$id-$count"</div>
+            <div class="i2">if known.contains(newName)</div>
+            <div class="i2">then rec(count + 1)</div>
+            <div class="i2">else newName</div>
+            <div class="i1">rec(0)</div>
         </div>
     </div>
 </body>
