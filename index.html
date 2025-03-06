@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CoPL</title>
+    <style>
+        body {
+            font-family: Consolas, "Courier New", monospace;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Indentation for radio buttons */
+        .radio-group {
+            margin-left: 25px;
+        }
+
+        .code-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .options-panel {
+            width: 250px;
+            background-color: #ddd;
+            padding: 20px;
+            border-left: 1px solid #bbb;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            overflow-y: auto;
+        }
+
+        .code-container {
+            background-color: #eee;
+            border: 1px solid #ccc;
+            padding: 15px;
+            line-height: 1.5;
+            margin-top: 20px;
+        }
+
+        .arithmetic,
+        .conditionals,
+        .let {
+            opacity: 0;
+        }
+
+        .eager,
+        .substitute {
+            display: none;
+        }
+
+
+        /* When the inline toggle is checked, show inline text */
+        body:has(#toggleArithmetic:checked) .arithmetic {
+            opacity: 1;
+            animation: highlight 10s forwards;
+        }
+
+        /* When the inline toggle is checked, show inline text */
+        body:has(#toggleConditionals:checked) .conditionals {
+            opacity: 1;
+            animation: highlight 10s forwards;
+        }
+
+        /* When the inline toggle is checked, show inline text */
+        body:has(#toggleLet:checked) .let {
+            opacity: 1;
+            animation: highlight 10s forwards;
+        }
+
+        /* When the inline toggle is checked, show inline text */
+        body:has(#toggleEager:checked) .eager {
+            display: inline;
+            animation: highlight 10s forwards;
+        }
+
+        /* When the inline toggle is checked, show inline text */
+        body:has(#toggleSubst:checked) .substitute {
+            display: block;
+            animation: highlight 10s forwards;
+        }
+
+        /* Keyframes animation: start green and transition to black */
+        @keyframes highlight {
+            0% {
+                color: rgb(8, 247, 8);
+            }
+
+            100% {
+                color: black;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="options-panel">
+        <h3>Options</h3>
+        <label><input type="checkbox" id="toggleArithmetic">Arithmetic Expressions</label><br>
+        <label><input type="checkbox" id="toggleConditionals">Conditionals</label><br>
+        <label><input type="checkbox" id="toggleLet">Identifiers (Let + Id)</label><br>
+        <div class="radio-group let">
+            Id<br>
+            <label><input type="radio" name="substitution" id="toggleSubst" checked> Substitution</label><br>
+            <label><input type="radio" name="substitution" id="toggleEnv"> Environment</label><br>
+        </div>
+        <div class="radio-group let">
+            Evaluation<br>
+            <label><input type="radio" name="eagerEval" id="toggleEager" checked> Eager</label><br>
+            <label><input type="radio" name="eagerEval" id="toggleLazy"> Lazy</label><br>
+        </div>
+    </div>
+
+    <div class="code-section">
+        <h2>Value</h2>
+        <div class="code-container">
+            <div>type Value = Int</div>
+        </div>
+
+        <h2>Class</h2>
+        <div class="code-container">
+            <div>abstract class Expr</div>
+            <div>&nbsp;&nbsp;case class Num(n: Int) extends Expr</div>
+            <div class="arithmetic">&nbsp;&nbsp;case class Add(lhs: Expr, rhs: Expr) extends Expr</div>
+            <div class="arithmetic">&nbsp;&nbsp;case class Sub(lhs: Expr, rhs: Expr) extends Expr</div>
+            <div class="conditionals">&nbsp;&nbsp;case class If0(c: Expr, t: Expr, f: Expr) extends Expr</div>
+            <div class="let">&nbsp;&nbsp;case class Let(name: String, bound: Expr, body: Expr) extends Expr</div>
+            <div class="let">&nbsp;&nbsp;case class Id(name: String) extends Expr</div>
+        </div>
+
+        <h2>Interpreter</h2>
+        <div class="code-container">
+            <div>def interp(expr: Expr): Value = expr match {</div>
+            <div>&nbsp;&nbsp;case Num(n) => n</div>
+            <div class="arithmetic">&nbsp;&nbsp;case Add(lhs, rhs) => interp(lhs) + interp(rhs)</div>
+            <div class="arithmetic">&nbsp;&nbsp;case Sub(lhs, rhs) => interp(lhs) - interp(rhs)</div>
+            <div class="conditionals">&nbsp;&nbsp;case If0(c, t, f) => if (interp(c) == 0)</div>
+            <div class="conditionals">&nbsp;&nbsp;&nbsp;&nbsp;interp(t) else interp(f)</div>
+            <div class="let">&nbsp;&nbsp;case Id(name) => sys.error(s"found unbound id $name")</div>
+            <div class="let">&nbsp;&nbsp;case Let(boundId, namedExpr, boundExpr) => interp(subst(boundExpr,
+                boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager">)</span>)))</div>
+            <div>}</div>
+        </div>
+
+        <h2 class="substitute">Substitute</h2>
+        <div class="code-container substitute">
+            <div>// Substitutes "substId" with "value" in "expr"</div>
+            <div>// The resulting expression contains no free instances of the 2nd argument.</div>
+            <div>def subst(expr: Expr, substId: String, value: Expr): Expr = expr match {</div>
+            <div>&nbsp;&nbsp;case Num(_) => expr</div>
+            <div class="arithmetic">&nbsp;&nbsp;case Add(lhs, rhs) => Add(subst(lhs, substId, value), subst(rhs,
+                substId, value))
+            </div>
+            <div class="arithmetic">&nbsp;&nbsp;case Sub(lhs, rhs) => Sub(subst(lhs, substId, value), subst(rhs,
+                substId, value))
+            </div>
+            <div class="conditionals">&nbsp;&nbsp;case If0(test, thenBody, elseBody) =></div>
+            <div class="conditionals">&nbsp;&nbsp;&nbsp;&nbsp;If0(subst(test, substId, value), subst(thenBody, substId,
+                value), subst(elseBody, substId, value))
+            </div>
+            <div class="let">&nbsp;&nbsp;case Id(name) => if substId == name then value else expr</div>
+            <div class="let">&nbsp;&nbsp;case Let(boundId, namedExpr, boundExpr) =></div>
+            <div class="let">&nbsp;&nbsp;&nbsp;&nbsp;val substNamedExpr = subst(namedExpr, substId, value)</div>
+            <div class="let">&nbsp;&nbsp;&nbsp;&nbsp;if boundId == substId then</div>
+            <div class="let">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let(boundId, substNamedExpr, boundExpr)</div>
+            <div class="let">&nbsp;&nbsp;&nbsp;&nbsp;else</div>
+            <div class="let">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let(boundId, substNamedExpr, subst(boundExpr, substId,
+                value))</div>
+            <div>&nbsp;&nbsp;case App(funName, argExprs) =></div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;val newArgs = argExprs.map(ex => subst(ex, substId, value))</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;App(funName, newArgs)</div>
+            <div>}</div>
+        </div>
+    </div>
+</body>
+
+</html>
