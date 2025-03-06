@@ -101,10 +101,13 @@
             animation: highlight 10s forwards;
         }
 
-        body:has(#toggleSubstNaive:checked) .substitute,
-        body:has(#toggleSubstSimple:checked) .substitute,
-        body:has(#toggleSubstCaptureAvoiding:checked) .substitute {
+        body:has(#toggleLet:checked) .substitute {
             display: block;
+            animation: highlight 10s forwards;
+        }
+
+        body:has(#toggleEnv:checked) .substitute {
+            display: none;
             animation: highlight 10s forwards;
         }
 
