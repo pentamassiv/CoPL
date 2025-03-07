@@ -183,10 +183,10 @@ body:has(#toggleScopeStatic:checked) .staticScope {
 /* Display the footer when a combination is not implemented (yet) */
 body:has(#toggleScopeDynamic:checked):has(#toggleSubstNaive:checked):has(#toggleLet:checked) .not-implemented,
 body:has(#toggleScopeDynamic:checked):has(#toggleSubstSimple:checked):has(#toggleLet:checked) .not-implemented,
-body:has(#toggleScopeDynamic:checked):has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .not-implemented {
+body:has(#toggleScopeDynamic:checked):has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .not-implemented,
+body:has(#toggleHigherOrder:checked) .not-implemented {
     display: block;
 }
-
 
 /* Keyframes animation: start green and transition to black */
 @keyframes highlight {
