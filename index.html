@@ -35,7 +35,7 @@
             <label><input type="radio" name="functions" id="toggleFirstClass"> First-Class</label><br>
         </div>
         <div class="radio-group functions">
-            Call-by<br>
+            Call-by // TODO<br>
             <label><input type="radio" name="functionsEval" id="toggleCallByValue"> Value</label><br>
             <label><input type="radio" name="functionsEval" id="toggleCallByName" checked> Name</label><br>
         </div>
@@ -66,6 +66,7 @@
             <div class="i1 functions">case class App(<span class="first-class-functions-inline">funExpr:
                     Expr</span><span class="not-first-class-functions-inline">funName: String</span>, argExpr: Expr)
                 extends Expr</div>
+            <div class="i1 first-class-functions-opacity">case class Fun(param: String, body: FLAE) extends Expr</div>
         </div>
 
         <h2>Interpreter</h2>
@@ -96,32 +97,40 @@
                     class="environment-inline">,
                     env</span>)</div>
             <div class="i1 let">case Id(name) => <span class="substitutionNaive-inline">sys.error(s"found unbound id
-                    $name")</span><span class="environment-inline">env(name)</span></div>
+                    $name")</span><span class="environment-inline">env.getOrElse(name, sys.error(s"unbound variable
+                    $name"))</span></div>
             <div class="i1 let">case Let(name, namedExpr, body) =></div>
             <div class="i2 substitutionNaive">val body = subst(body,
                 name, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
-            <div class="i2 environment">val newEnv = env + (id -> interp(expr,
-                funDefs, env))</div>
+            <div class="i2 environment">val newEnv = env + (id -> interp(expr<span
+                    class="not-first-class-functions-inline">,
+                    funDefs</span><span class="environment-inline">,
+                    env</span>))</div>
             <div class="i2 let">interp(body<span class="not-first-class-functions-inline">, funDefs</span><span
                     class="environment-inline">, newEnv</span>)</div>
             <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
                     class="not-first-class-functions-inline">funName</span>, argExpr) => <span
-                    class="first-class-functions-inline">interp(funExpr)</span><span
-                    class="not-first-class-functions-inline">funDefs(funName)</span> match {</div>
+                    class="first-class-functions-inline">interp(funExpr<span class="environment-inline">,
+                        env</span>)</span><span class="not-first-class-functions-inline">funDefs(funName)</span> match {
+            </div>
             <div class="i2 functions">case <span class="first-class-functions-inline">VFun</span><span
                     class="not-first-class-functions-inline">FunDef</span>(param, body) =></div>
 
             <div class="i3 substitutionNaive">val body = subst(body,
                 param, <span class="eager">Num(interp(</span>argExpr<span class="eager-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
-            <div class="i3 environment">val funEnv = <span class="dynamicScope">env + </span><span
-                    class="staticScope">Map</span>(param -> interp(argExpr, funDefs, env))</div>
+            <div class="i3 environment">val argVal = interp(argExpr<span class="not-first-class-functions-inline">,
+                    funDefs</span><span class="environment-inline">,
+                    env</span>)</div>
+            <div class="i3 environment">val newEnv = <span class="dynamicScope">env + </span><span
+                    class="staticScope">Map</span>(param -> argVal)</div>
 
             <div class="i3 functions">interp(body<span class="not-first-class-functions-inline">, funDefs</span><span
-                    class="environment-inline">, funEnv</span>)</div>
+                    class="environment-inline">, newEnv</span>)</div>
             <div class="i2 first-class-functions">case v1 => error(s"Expected funct value but got $v1")</div>
             <div class="i1 functions">}</div>
+            <div class="i1 first-class-functions-opacity">case class Fun(param, body) => VFun(param, body)</div>
             <div>}</div>
         </div>
 
