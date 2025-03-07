@@ -90,10 +90,10 @@
                     env</span>) else interp(f<span class="functions-inline">, funDefs</span><span
                     class="environment-inline">,
                     env</span>)</div>
-            <div class="i1 let">case Id(name) => <span class="substitute-inline">sys.error(s"found unbound id
+            <div class="i1 let">case Id(name) => <span class="substitutionNaive-inline">sys.error(s"found unbound id
                     $name")</span><span class="environment-inline">env(name)</span></div>
             <div class="i1 let">case Let(boundId, namedExpr, boundExpr) =></div>
-            <div class="i2 substitutionFlawed substitutionCorrect">val body = subst(boundExpr,
+            <div class="i2 substitutionNaive">val body = subst(boundExpr,
                 boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
             <div class="i2 environment">val newEnv = env + (id -> interp(expr,
@@ -104,7 +104,7 @@
             <div class="i2 functions">case FunDef(param, body) =></div>
 
 
-            <div class="i3 substitutionFlawed substitutionCorrect">val body = subst(boundExpr,
+            <div class="i3 substitutionNaive">val body = subst(boundExpr,
                 boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
             <div class="i3 environment">val funEnv = <span class="dynamicScope">env + </span><span
@@ -116,8 +116,8 @@
             <div>}</div>
         </div>
 
-        <h2 class="substitutionFlawed substitutionCorrect">Substitute</h2>
-        <div class="code-container substitutionFlawed">
+        <h2 class="substitutionNaive">Substitute</h2>
+        <div class="code-container substitutionNaive">
             <div>// Substitutes "substId" with "value" in "expr"</div>
             <div>// The resulting expression contains no free instances of the 2nd argument.</div>
             <div>def subst(expr: Expr, substId: String, value: Expr): Expr = expr match {</div>
@@ -139,60 +139,31 @@
             <div class="i3 substitutionSimple">Let(boundId, substNamedExpr,
                 boundExpr)</div>
             <div class="i2 substitutionSimple">else</div>
-            <div class="i2"><span class="substitutionSimpleSpaces">&nbsp;&nbsp;</span>Let(boundId,
+            <div class="i2"><span class="substitutionSimple-inline">&nbsp;&nbsp;</span>Let(boundId,
                 substNamedExpr, subst(boundExpr, substId, value))</div>
             <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
                     class="not-first-class-functions-inline">funName</span>, argExpr) =></div>
             <div class="i2 functions">val newArg = subst(argExpr, substId, value)</div>
             <div class="i2 first-class-functions">val newFunExpr = subst(funExpr, substId, value)</div>
             <div class="i2 functions">App(<span class="first-class-functions-inline">newFunExpr</span><span
-                    class="not-first-class-functions-inline">funName</span>, newArg)
-            </div>
-            <div>}</div>
-        </div>
-
-        <div class="code-container substitutionCorrect">
-            <!-- subst -->
-            <div>def subst(expr: Expression, substId: String, value: Expression): Expression = expr match {
-            </div>
-            <div class="i1">case Id(name) => if substId == name then value else expr</div>
+                    class="not-first-class-functions-inline">funName</span>, newArg)</div>
             <div class="i1">case Fun(param, body) =></div>
-            <div class="i2">if param == substId</div>
-            <div class="i2">then Fun(param, body)</div>
-            <div class="i2">else if !freeVariables(value).contains(param)</div>
-            <div class="i2">then</div>
-            <div class="i3">Fun(param, subst(body, substId, value))</div>
-            <div class="i2">else</div>
-            <div class="i3">val potentialConflicts = freeVariables(value) union freeVariables(body)</div>
-            <div class="i3">val freshId = Id(freshName(param, potentialConflicts))</div>
-            <div class="i3">val alphaRenamed = subst(body, param, freshId)</div>
-            <div class="i3">Fun(freshId.name, subst(alphaRenamed, substId, value))</div>
-            <div class="i1 functions">case App(funExpr, argExpr) =></div>
-            <div class="i2 functions">App(subst(funExpr, substId, value), subst(argExpr, substId, value))</div>
-            <div>}</div>
-            <br>
 
-            <!-- freeVariables -->
-            <div>def freeVariables(expr: Expression): Set[String] = expr match {</div>
-            <div class="i1">case Num(_) => Set.empty</div>
-            <div class="i1 arithmetic">case Add(lhs, rhs) => freeVars(lhs) union freeVars(rhs)</div>
-            <div class="i1 arithmetic">case Sub(lhs, rhs) => freeVars(lhs) union freeVars(rhs)</div>
-            <div class="i1 conditionals">case If0(c, t, f) => ??? // TODO</div>
-            <div class="i1">case Let(name, namedExpr, body) => (freeVars(namedExpr) - name) union freeVars(body)</div>
-            <div class="i1">case Id(x) => Set(x)</div>
-            <div class="i1">case Fun(param, body) => freeVariables(body) - param //TODO: TOGGLE</div>
-            <div class="i1 functions">case App(e1, e2) => freeVariables(e1) ++ freeVariables(e2)</div>
-            <div>}</div>
-            <br>
 
-            <!-- freshName -->
-            <div>def freshName(id: String, known: Set[String]): String =</div>
-            <div class="i1">def rec(count: Int): String =</div>
-            <div class="i2">val newName = s"$id-$count"</div>
-            <div class="i2">if known.contains(newName)</div>
-            <div class="i2">then rec(count + 1)</div>
-            <div class="i2">else newName</div>
-            <div class="i1">rec(0)</div>
+            <div class="i2 substitutionSimple">if param == substId then</div>
+            <div class="i3 substitutionSimple">Fun(param, body)</div>
+            <div class="i2 substitutionSimple">else<span class="substitutionCaptureAvoiding-inline"> if
+                    !freeVariables(value).contains(param) then</span></div>
+            <div class="i2"><span class="substitutionSimple-inline">&nbsp;&nbsp;</span>Fun(param, subst(body, substId,
+                value))</div>
+            <div class="i2 substitutionCaptureAvoiding">else</div>
+            <div class="i3 substitutionCaptureAvoiding">val potentialConflicts = freeVariables(value) union
+                freeVariables(body)
+            </div>
+            <div class="i3 substitutionCaptureAvoiding">val freshId = Id(freshName(param, potentialConflicts))</div>
+            <div class="i3 substitutionCaptureAvoiding">val alphaRenamed = subst(body, param, freshId)</div>
+            <div class="i3 substitutionCaptureAvoiding">Fun(freshId.name, subst(alphaRenamed, substId, value))</div>
+            <div>}</div>
         </div>
     </div>
 </body>

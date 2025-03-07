@@ -78,11 +78,12 @@ footer {
 }
 
 .eager,
-.substitute-inline,
-.substitutionFlawed,
-.substitutionCorrect,
+.substitutionNaive,
+.substitutionNaive-inline,
 .substitutionSimple,
-.substitutionSimpleSpaces,
+.substitutionSimple-inline,
+.substitutionCaptureAvoiding,
+.substitutionCaptureAvoiding-inline,
 .functions-inline,
 .call-by-value,
 .eager-functions-inline,
@@ -126,30 +127,38 @@ body:has(#toggleEnv:checked) .environment-inline {
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleSubstSimple:checked) .substitutionSimple {
+body:has(#toggleSubstNaive:checked):has(#toggleLet:checked) .substitutionNaive,
+body:has(#toggleSubstSimple:checked):has(#toggleLet:checked) .substitutionNaive,
+body:has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .substitutionNaive {
     display: block;
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleSubstSimple:checked) .substitutionSimpleSpaces {
-    display: inline;
-}
-
-body:has(#toggleSubstNaive:checked):has(#toggleLet:checked) .substitutionFlawed,
-body:has(#toggleSubstSimple:checked):has(#toggleLet:checked) .substitutionFlawed {
-    display: block;
-    animation: highlight 10s forwards;
-}
-
-body:has(#toggleSubstNaive:checked):has(#toggleLet:checked) .substitute-inline,
-body:has(#toggleSubstSimple:checked):has(#toggleLet:checked) .substitute-inline,
-body:has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .substitute-inline {
+body:has(#toggleSubstNaive:checked):has(#toggleLet:checked) .substitutionNaive-inline,
+body:has(#toggleSubstSimple:checked):has(#toggleLet:checked) .substitutionNaive-inline,
+body:has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .substitutionNaive-inline {
     display: inline;
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .substitutionCorrect {
+body:has(#toggleSubstSimple:checked):has(#toggleLet:checked) .substitutionSimple,
+body:has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .substitutionSimple {
     display: block;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleSubstSimple:checked):has(#toggleLet:checked) .substitutionSimple-inline,
+body:has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .substitutionSimple-inline {
+    display: inline;
+}
+
+body:has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .substitutionCaptureAvoiding {
+    display: block;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .substitutionCaptureAvoiding-inline {
+    display: inline;
     animation: highlight 10s forwards;
 }
 
