@@ -4,6 +4,20 @@ body {
     padding: 20px;
 }
 
+/* Hide by default */
+footer {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: red;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+}
+
 .i1 {
     margin-left: 2ch;
 }
@@ -143,6 +157,11 @@ body:has(#toggleLetEager:checked):has(#toggleFunctions:checked) .eager-functions
 body:has(#toggleCallByValue:checked):has(#toggleFunctions:checked) .call-by-value {
     display: inline;
     animation: highlight 10s forwards;
+}
+
+/* Display the footer when a combination is not implemented (yet) */
+body:has(#toggleCallByValue:checked):has(#toggleFunctions:checked) .not-implemented {
+    display: block;
 }
 
 
