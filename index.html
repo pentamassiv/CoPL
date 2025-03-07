@@ -96,9 +96,9 @@
                     env</span>) else interp(f<span class="not-first-class-functions-inline">, funDefs</span><span
                     class="environment-inline">,
                     env</span>)</div>
-            <div class="i1 let">case Id(name) => <span class="substitutionNaive-inline">sys.error(s"found unbound id
-                    $name")</span><span class="environment-inline">env.getOrElse(name, sys.error(s"unbound variable
-                    $name"))</span></div>
+            <div class="i1 let">case Id(name) => <span class="environment-inline">env.getOrElse(name,
+                </span>sys.error(s"unbound variable
+                $name")<span class="environment-inline">)</span></div>
             <div class="i1 let">case Let(name, namedExpr, body) =></div>
             <div class="i2 substitutionNaive">val body = subst(body,
                 name, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
