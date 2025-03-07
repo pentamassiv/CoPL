@@ -77,6 +77,7 @@
         .substitutionSimple,
         .substitutionSimpleSpaces,
         .functions-inline,
+        .call-by-value,
         .eager-functions-inline {
             display: none;
         }
@@ -146,6 +147,11 @@
             animation: highlight 10s forwards;
         }
 
+        body:has(#toggleCallByValue:checked):has(#toggleFunctions:checked) .call-by-value {
+            display: inline;
+            animation: highlight 10s forwards;
+        }
+
 
         /* Keyframes animation: start green and transition to black */
         @keyframes highlight {
@@ -176,7 +182,7 @@
             <label><input type="radio" name="substitution" id="toggleEnv"> Environment // TODO</label><br>
         </div>
         <div class="radio-group let">
-            Evaluation<br>
+            Substitution<br>
             <label><input type="radio" name="letEval" id="toggleLetEager"> Eager</label><br>
             <label><input type="radio" name="letEval" id="toggleLetLazy" checked> Lazy</label><br>
         </div>
@@ -188,9 +194,9 @@
             <label><input type="radio" name="functions" id="toggleHigherClass" checked> First-Class</label><br>
         </div>
         <div class="radio-group functions">
-            Evaluation<br>
-            <label><input type="radio" name="functionsEval" id="toggleFunctionsEager"> Eager</label><br>
-            <label><input type="radio" name="functionsEval" id="toggleFunctionsLazy" checked> Lazy</label><br>
+            Call-by<br>
+            <label><input type="radio" name="functionsEval" id="toggleCallByValue"> Value</label><br>
+            <label><input type="radio" name="functionsEval" id="toggleCallByName" checked> Name</label><br>
         </div>
     </div>
 
@@ -234,9 +240,8 @@
             <div class="i2 let">interp(body<span class="functions-inline">, funDefs</span>)</div>
             <div class="i1 functions">case App(funName, arg) => funDefs(funName) match {</div>
             <div class="i2 functions">case FunDef(param, body) =></div>
-            <div class="i3 functions">interp(subst(body, param, <span
-                    class="eager-functions-inline">Num(interp(</span>arg, funDefs<span
-                    class="eager-functions-inline">))</span>), funDefs)</div>
+            <div class="i3 functions">interp(subst(body, param, <span class="call-by-value">Num(interp(</span>arg<span
+                    class="call-by-value">, funDefs))</span>), funDefs)</div>
             <div class="i1 functions">}</div>
             <div>}</div>
         </div>
@@ -305,7 +310,7 @@
             <div class="i1">case Let(name, namedExpr, body) => (freeVars(namedExpr) - name) union freeVars(body)</div>
             <div class="i1">case Id(x) => Set(x)</div>
             <div class="i1">case Fun(param, body) => freeVariables(body) - param //TODO: TOGGLE</div>
-            <div class="i1 functions">case App(e1, e2) => freeVariables(e1) ++ freeVariables(e2) //TODO: TOGGLE</div>
+            <div class="i1 functions">case App(e1, e2) => freeVariables(e1) ++ freeVariables(e2)</div>
             <div>}</div>
             <br>
 
