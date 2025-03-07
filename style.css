@@ -1,0 +1,158 @@
+body {
+    font-family: Consolas, "Courier New", monospace;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+.i1 {
+    margin-left: 2ch;
+}
+
+.i2 {
+    margin-left: 4ch;
+}
+
+.i3 {
+    margin-left: 6ch;
+}
+
+.i4 {
+    margin-left: 8ch;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Indentation for radio buttons */
+.radio-group {
+    margin-left: 25px;
+}
+
+.code-section {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.options-panel {
+    width: 350px;
+    background-color: #ddd;
+    padding: 20px;
+    border-left: 1px solid #bbb;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.code-container {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    padding: 15px;
+    line-height: 1.5;
+    margin-top: 20px;
+}
+
+.arithmetic,
+.conditionals,
+.let,
+.functions {
+    opacity: 0;
+}
+
+.eager,
+.substitute,
+.substitutionFlawed,
+.substitutionCorrect,
+.substitutionSimple,
+.substitutionSimpleSpaces,
+.functions-inline,
+.call-by-value,
+.eager-functions-inline {
+    display: none;
+}
+
+body:has(#toggleArithmetic:checked) .arithmetic {
+    opacity: 1;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleConditionals:checked) .conditionals {
+    opacity: 1;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleLet:checked) .let {
+    opacity: 1;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleLetEager:checked) .eager {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleLet:checked) .substitute {
+    display: block;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleEnv:checked) .substitute {
+    display: none;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleSubstSimple:checked) .substitutionSimple {
+    display: block;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleSubstSimple:checked) .substitutionSimpleSpaces {
+    display: inline;
+}
+
+body:has(#toggleSubstNaive:checked) .substitutionFlawed,
+body:has(#toggleSubstSimple:checked) .substitutionFlawed {
+    display: block;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleSubstCaptureAvoiding:checked) .substitutionCorrect {
+    display: block;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleFunctions:checked) .functions {
+    opacity: 1;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleFunctions:checked) .functions-inline {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleLetEager:checked):has(#toggleFunctions:checked) .eager-functions-inline {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleCallByValue:checked):has(#toggleFunctions:checked) .call-by-value {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+
+/* Keyframes animation: start green and transition to black */
+@keyframes highlight {
+    0% {
+        color: rgb(8, 247, 8);
+    }
+
+    100% {
+        color: black;
+    }
+}
