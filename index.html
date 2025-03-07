@@ -17,11 +17,11 @@
         <div class="radio-group let">
             Id<br>
             <label><input type="radio" name="substitution" id="toggleSubstNaive" checked> Naive Substitution</label><br>
-            <label><input type="radio" name="substitution" id="toggleSubstSimple" checked> Simple
+            <label><input type="radio" name="substitution" id="toggleSubstSimple"> Simple
                 Substitution</label><br>
-            <label><input type="radio" name="substitution" id="toggleSubstCaptureAvoiding" checked> Capture-Avoiding
+            <label><input type="radio" name="substitution" id="toggleSubstCaptureAvoiding"> Capture-Avoiding
                 Substitution</label><br>
-            <label><input type="radio" name="substitution" id="toggleEnv"> Environment // TODO</label><br>
+            <label><input type="radio" name="substitution" id="toggleEnv"> Environment</label><br>
         </div>
         <div class="radio-group let">
             Substitution<br>
@@ -29,16 +29,22 @@
             <label><input type="radio" name="letEval" id="toggleLetLazy" checked> Lazy</label><br>
         </div>
 
+
         <label><input type="checkbox" id="toggleFunctions">Functions</label><br>
         <div class="radio-group functions">
             <label><input type="radio" name="functions" id="toggleFirstOrder" checked> First-Order</label><br>
-            <label><input type="radio" name="functions" id="toggleHigherOrder" checked> Higher-Order</label><br>
-            <label><input type="radio" name="functions" id="toggleHigherClass" checked> First-Class</label><br>
+            <label><input type="radio" name="functions" id="toggleHigherOrder"> Higher-Order</label><br>
+            <label><input type="radio" name="functions" id="toggleHigherClass"> First-Class</label><br>
         </div>
         <div class="radio-group functions">
             Call-by<br>
             <label><input type="radio" name="functionsEval" id="toggleCallByValue"> Value</label><br>
             <label><input type="radio" name="functionsEval" id="toggleCallByName" checked> Name</label><br>
+        </div>
+        <div class="radio-group functions">
+            Scope<br>
+            <label><input type="radio" name="functionsScope" id="toggleScopeStatic" checked> Static</label><br>
+            <label><input type="radio" name="functionsScope" id="toggleScopeDynamic"> Dynamic</label><br>
         </div>
     </div>
 
@@ -62,33 +68,55 @@
 
         <h2>Interpreter</h2>
         <div class="code-container">
-            <div>def interp(expr: Expr<span class="functions-inline">, funDefs: Map[String, FunDef]</span>): Value =
+            <div>def interp(expr: Expr<span class="functions-inline">, funDefs: Map[String, FunDef]</span><span
+                    class="environment-inline">, env: Env</span>): Value =
                 expr match
                 {</div>
             <div class="i1">case Num(n) => n</div>
-            <div class="i1 arithmetic">case Add(lhs, rhs) => interp(lhs<span class="functions-inline">, funDefs</span>)
-                + interp(rhs<span class="functions-inline">, funDefs</span>)</div>
-            <div class="i1 arithmetic">case Sub(lhs, rhs) => interp(lhs<span class="functions-inline">, funDefs</span>)
-                - interp(rhs<span class="functions-inline">, funDefs</span>)</div>
+            <div class="i1 arithmetic">case Add(lhs, rhs) => interp(lhs<span class="functions-inline">,
+                    funDefs</span><span class="environment-inline">, env</span>)
+                + interp(rhs<span class="functions-inline">, funDefs</span><span class="environment-inline">,
+                    env</span>)</div>
+            <div class="i1 arithmetic">case Sub(lhs, rhs) => interp(lhs<span class="functions-inline">,
+                    funDefs</span><span class="environment-inline">,
+                    env</span>)
+                - interp(rhs<span class="functions-inline">, funDefs</span><span class="environment-inline">,
+                    env</span>)</div>
             <div class="i1 conditionals">case If0(c, t, f) => if (interp(c<span class="functions-inline">,
-                    funDefs</span>) == 0)</div>
-            <div class="i2 conditionals">interp(t<span class="functions-inline">, funDefs</span>) else interp(f<span
-                    class="functions-inline">, funDefs</span>)</div>
-            <div class="i1 let">case Id(name) => sys.error(s"found unbound id $name")</div>
+                    funDefs</span><span class="environment-inline">,
+                    env</span>) == 0)</div>
+            <div class="i2 conditionals">interp(t<span class="functions-inline">, funDefs</span><span
+                    class="environment-inline">,
+                    env</span>) else interp(f<span class="functions-inline">, funDefs</span><span
+                    class="environment-inline">,
+                    env</span>)</div>
+            <div class="i1 let">case Id(name) => <span class="substitute-inline">sys.error(s"found unbound id
+                    $name")</span><span class="environment-inline">env(name)</span></div>
             <div class="i1 let">case Let(boundId, namedExpr, boundExpr) =></div>
-            <div class="i2 let">val body = subst(boundExpr,
+            <div class="i2 substitutionFlawed substitutionCorrect">val body = subst(boundExpr,
                 boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
-            <div class="i2 let">interp(body<span class="functions-inline">, funDefs</span>)</div>
+            <div class="i2 environment">val newEnv = env + (id -> interp(expr,
+                funDefs, env))</div>
+            <div class="i2 let">interp(body<span class="functions-inline">, funDefs</span><span
+                    class="environment-inline">, newEnv</span>)</div>
             <div class="i1 functions">case App(funName, arg) => funDefs(funName) match {</div>
             <div class="i2 functions">case FunDef(param, body) =></div>
-            <div class="i3 functions">interp(subst(body, param, <span class="call-by-value">Num(interp(</span>arg<span
-                    class="call-by-value">, funDefs))</span>), funDefs)</div>
+
+
+            <div class="i3 substitutionFlawed substitutionCorrect">val body = subst(boundExpr,
+                boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
+                    funDefs</span><span class="eager">))</span>)</div>
+            <div class="i3 environment">val funEnv = <span class="dynamicScope">env + </span><span
+                    class="staticScope">Map</span>(param -> interp(arg, funDefs, env))</div>
+
+            <div class="i3 functions">interp(body<span class="functions-inline">, funDefs</span><span
+                    class="environment-inline">, funEnv</span>)</div>
             <div class="i1 functions">}</div>
             <div>}</div>
         </div>
 
-        <h2 class="substitute">Substitute</h2>
+        <h2 class="substitutionFlawed substitutionCorrect">Substitute</h2>
         <div class="code-container substitutionFlawed">
             <div>// Substitutes "substId" with "value" in "expr"</div>
             <div>// The resulting expression contains no free instances of the 2nd argument.</div>
@@ -120,7 +148,6 @@
         </div>
 
         <div class="code-container substitutionCorrect">
-
             <!-- subst -->
             <div>def subst(expr: Expression, substId: String, value: Expression): Expression = expr match {
             </div>
@@ -146,9 +173,7 @@
             <div class="i1">case Num(_) => Set.empty</div>
             <div class="i1 arithmetic">case Add(lhs, rhs) => freeVars(lhs) union freeVars(rhs)</div>
             <div class="i1 arithmetic">case Sub(lhs, rhs) => freeVars(lhs) union freeVars(rhs)</div>
-            <div class="i1 conditionals">case If0(c, t, f) => freeVars(c) union freeVars(t) union freeVars(f) //TODO:
-                Probably wrong
-            </div>
+            <div class="i1 conditionals">case If0(c, t, f) => ??? // TODO</div>
             <div class="i1">case Let(name, namedExpr, body) => (freeVars(namedExpr) - name) union freeVars(body)</div>
             <div class="i1">case Id(x) => Set(x)</div>
             <div class="i1">case Fun(param, body) => freeVariables(body) - param //TODO: TOGGLE</div>

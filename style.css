@@ -78,14 +78,18 @@ footer {
 }
 
 .eager,
-.substitute,
+.substitute-inline,
 .substitutionFlawed,
 .substitutionCorrect,
 .substitutionSimple,
 .substitutionSimpleSpaces,
 .functions-inline,
 .call-by-value,
-.eager-functions-inline {
+.eager-functions-inline,
+.environment,
+.environment-inline,
+.staticScope,
+.dynamicScope {
     display: none;
 }
 
@@ -109,13 +113,13 @@ body:has(#toggleLetEager:checked) .eager {
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleLet:checked) .substitute {
+body:has(#toggleEnv:checked) .environment {
     display: block;
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleEnv:checked) .substitute {
-    display: none;
+body:has(#toggleEnv:checked) .environment-inline {
+    display: inline;
     animation: highlight 10s forwards;
 }
 
@@ -128,13 +132,20 @@ body:has(#toggleSubstSimple:checked) .substitutionSimpleSpaces {
     display: inline;
 }
 
-body:has(#toggleSubstNaive:checked) .substitutionFlawed,
-body:has(#toggleSubstSimple:checked) .substitutionFlawed {
+body:has(#toggleSubstNaive:checked):has(#toggleLet:checked) .substitutionFlawed,
+body:has(#toggleSubstSimple:checked):has(#toggleLet:checked) .substitutionFlawed {
     display: block;
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleSubstCaptureAvoiding:checked) .substitutionCorrect {
+body:has(#toggleSubstNaive:checked):has(#toggleLet:checked) .substitute-inline,
+body:has(#toggleSubstSimple:checked):has(#toggleLet:checked) .substitute-inline,
+body:has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .substitute-inline {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .substitutionCorrect {
     display: block;
     animation: highlight 10s forwards;
 }
@@ -159,8 +170,20 @@ body:has(#toggleCallByValue:checked):has(#toggleFunctions:checked) .call-by-valu
     animation: highlight 10s forwards;
 }
 
+body:has(#toggleScopeDynamic:checked) .dynamicScope {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleScopeStatic:checked) .staticScope {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
 /* Display the footer when a combination is not implemented (yet) */
-body:has(#toggleCallByValue:checked):has(#toggleFunctions:checked) .not-implemented {
+body:has(#toggleScopeDynamic:checked):has(#toggleSubstNaive:checked):has(#toggleLet:checked) .not-implemented,
+body:has(#toggleScopeDynamic:checked):has(#toggleSubstSimple:checked):has(#toggleLet:checked) .not-implemented,
+body:has(#toggleScopeDynamic:checked):has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .not-implemented {
     display: block;
 }
 
@@ -168,10 +191,10 @@ body:has(#toggleCallByValue:checked):has(#toggleFunctions:checked) .not-implemen
 /* Keyframes animation: start green and transition to black */
 @keyframes highlight {
     0% {
-        color: rgb(8, 247, 8);
+        background-color: yellow;
     }
 
     100% {
-        color: black;
+        background-color: transparent;
     }
 }
