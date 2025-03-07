@@ -34,7 +34,7 @@
         <div class="radio-group functions">
             <label><input type="radio" name="functions" id="toggleFirstOrder" checked> First-Order</label><br>
             <label><input type="radio" name="functions" id="toggleHigherOrder"> Higher-Order</label><br>
-            <label><input type="radio" name="functions" id="toggleHigherClass"> First-Class</label><br>
+            <label><input type="radio" name="functions" id="toggleFirstClass"> First-Class</label><br>
         </div>
         <div class="radio-group functions">
             Call-by<br>
@@ -54,7 +54,7 @@
             <div>type Value = Int</div>
         </div>
 
-        <h2>Class</h2>
+        <h2>AST</h2>
         <div class="code-container">
             <div>abstract class Expr</div>
             <div class="i1">case class Num(n: Int) extends Expr</div>
@@ -141,9 +141,13 @@
             <div class="i2 substitutionSimple">else</div>
             <div class="i2"><span class="substitutionSimpleSpaces">&nbsp;&nbsp;</span>Let(boundId,
                 substNamedExpr, subst(boundExpr, substId, value))</div>
-            <div class="i1 functions">case App(funName, argExprs) =>//TODO: TOGGLE</div>
-            <div class="i2 functions">val newArgs = argExprs.map(ex => subst(ex, substId, value))//TODO: TOGGLE</div>
-            <div class="i2 functions">App(funName, newArgs)//TODO: TOGGLE</div>
+            <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
+                    class="not-first-class-functions-inline">funName</span>, argExpr) =></div>
+            <div class="i2 functions">val newArg = subst(argExpr, substId, value)</div>
+            <div class="i2 first-class-functions">val newFunExpr = subst(funExpr, substId, value)</div>
+            <div class="i2 functions">App(<span class="first-class-functions-inline">newFunExpr</span><span
+                    class="not-first-class-functions-inline">funName</span>, newArg)
+            </div>
             <div>}</div>
         </div>
 

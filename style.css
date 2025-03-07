@@ -89,7 +89,10 @@ footer {
 .environment,
 .environment-inline,
 .staticScope,
-.dynamicScope {
+.dynamicScope,
+.first-class-functions,
+.first-class-functions-inline,
+.not-first-class-functions-inline {
     display: none;
 }
 
@@ -176,6 +179,22 @@ body:has(#toggleScopeDynamic:checked) .dynamicScope {
 }
 
 body:has(#toggleScopeStatic:checked) .staticScope {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleFirstClass:checked) .first-class-functions {
+    display: block;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleHigherOrder:checked) .not-first-class-functions-inline,
+body:has(#toggleFirstOrder:checked) .not-first-class-functions-inline {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleFirstClass:checked) .first-class-functions-inline {
     display: inline;
     animation: highlight 10s forwards;
 }
