@@ -51,7 +51,7 @@
         <div class="code-container">
             <div>abstract class Value</div>
             <div class="i1">case class VNum(n: Int) extends Value</div>
-            <div class="i1 first-class-functions">case class VFun(param: String, body: Expr) extends Value</div>
+            <div class="i1 first-class-functions-opacity">case class VFun(param: String, body: Expr) extends Value</div>
         </div>
 
         <h2>AST</h2>
@@ -127,6 +127,8 @@
 
         <h2 class="substitutionNaive">Substitute</h2>
         <div class="code-container substitutionNaive">
+
+            <!-- substitute -->
             <div>// Substitutes "substId" with "value" in "expr"</div>
             <div>// The resulting expression contains no free instances of the 2nd argument.</div>
             <div>def subst(expr: Expr, substId: String, value: Expr): Expr = expr match {</div>
@@ -157,8 +159,6 @@
             <div class="i2 functions">App(<span class="first-class-functions-inline">newFunExpr</span><span
                     class="not-first-class-functions-inline">funName</span>, newArg)</div>
             <div class="i1">case Fun(param, body) =></div>
-
-
             <div class="i2 substitutionSimple">if param == substId then</div>
             <div class="i3 substitutionSimple">Fun(param, body)</div>
             <div class="i2 substitutionSimple">else<span class="substitutionCaptureAvoiding-inline"> if
@@ -172,7 +172,36 @@
             <div class="i3 substitutionCaptureAvoiding">val freshId = Id(freshName(param, potentialConflicts))</div>
             <div class="i3 substitutionCaptureAvoiding">val alphaRenamed = subst(body, param, freshId)</div>
             <div class="i3 substitutionCaptureAvoiding">Fun(freshId.name, subst(alphaRenamed, substId, value))</div>
-            <div>}</div>
+            <div>}</div><br>
+
+            <!-- freeVariables -->
+            <div>def freeVariables(expr: Expression): Set[String] = expr match {</div>
+            <div class="i1 substitutionCaptureAvoiding">case Num(_) => Set.empty</div>
+            <div class="i1 substitutionCaptureAvoiding arithmetic">case Add(lhs, rhs) => freeVars(lhs) union
+                freeVars(rhs)</div>
+            <div class="i1 substitutionCaptureAvoiding arithmetic">case Sub(lhs, rhs) => freeVars(lhs) union
+                freeVars(rhs)</div>
+            <div class="i1 substitutionCaptureAvoiding conditionals">case If0(c, t, f) => ??? // TODO</div>
+            <div class="i1 substitutionCaptureAvoiding">case Let(name, namedExpr, body) => (freeVars(namedExpr) - name)
+                union freeVars(body)</div>
+            <div class="i1 substitutionCaptureAvoiding">case Id(name) => Set(name)</div>
+            <div class="i1 substitutionCaptureAvoiding functions">case App(<span
+                    class="first-class-functions-inline">funExpr</span><span
+                    class="not-first-class-functions-inline">funName</span>, argExpr) => <span
+                    class="first-class-functions-inline">freeVariables(funExpr) ++ </span>freeVariables(argExpr)</div>
+            <div class="i1 first-class-functions-opacity">case Fun(param, body) =>
+                freeVariables(body) - param</div>
+            <div class="substitutionCaptureAvoiding">}</div>
+            <br>
+
+            <!-- freshName -->
+            <div class="substitutionCaptureAvoiding">def freshName(id: String, known: Set[String]): String =</div>
+            <div class="i1 substitutionCaptureAvoiding">def rec(count: Int): String =</div>
+            <div class="i2 substitutionCaptureAvoiding">val newName = s"$id-$count"</div>
+            <div class="i2 substitutionCaptureAvoiding">if known.contains(newName)</div>
+            <div class="i2 substitutionCaptureAvoiding">then rec(count + 1)</div>
+            <div class="i2 substitutionCaptureAvoiding">else newName</div>
+            <div class="i1 substitutionCaptureAvoiding">rec(0)</div>
         </div>
     </div>
 </body>
