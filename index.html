@@ -28,8 +28,6 @@
             <label><input type="radio" name="letEval" id="toggleLetEager"> Eager</label><br>
             <label><input type="radio" name="letEval" id="toggleLetLazy" checked> Lazy</label><br>
         </div>
-
-
         <label><input type="checkbox" id="toggleFunctions">Functions</label><br>
         <div class="radio-group functions">
             <label><input type="radio" name="functions" id="toggleFirstOrder" checked> First-Order</label><br>
@@ -49,9 +47,11 @@
     </div>
 
     <div class="code-section">
-        <h2>Value</h2>
+        <h2>Values</h2>
         <div class="code-container">
-            <div>type Value = Int</div>
+            <div>abstract class Value</div>
+            <div class="i1">case class VNum(n: Int) extends Value</div>
+            <div class="i1 first-class-functions">case class VFun(param: String, body: Expr) extends Value</div>
         </div>
 
         <h2>AST</h2>
@@ -68,26 +68,29 @@
 
         <h2>Interpreter</h2>
         <div class="code-container">
-            <div>def interp(expr: Expr<span class="functions-inline">, funDefs: Map[String, FunDef]</span><span
-                    class="environment-inline">, env: Env</span>): Value =
+            <div>def interp(expr: Expr<span class="not-first-class-functions-inline">, funDefs: Map[String,
+                    FunDef]</span><span class="environment-inline">, env: Env</span>): Value =
                 expr match
                 {</div>
             <div class="i1">case Num(n) => n</div>
-            <div class="i1 arithmetic">case Add(lhs, rhs) => interp(lhs<span class="functions-inline">,
+            <div class="i1 arithmetic">case Add(lhs, rhs) => interp(lhs<span class="not-first-class-functions-inline">,
                     funDefs</span><span class="environment-inline">, env</span>)
-                + interp(rhs<span class="functions-inline">, funDefs</span><span class="environment-inline">,
+                + interp(rhs<span class="not-first-class-functions-inline">, funDefs</span><span
+                    class="environment-inline">,
                     env</span>)</div>
-            <div class="i1 arithmetic">case Sub(lhs, rhs) => interp(lhs<span class="functions-inline">,
+            <div class="i1 arithmetic">case Sub(lhs, rhs) => interp(lhs<span class="not-first-class-functions-inline">,
                     funDefs</span><span class="environment-inline">,
                     env</span>)
-                - interp(rhs<span class="functions-inline">, funDefs</span><span class="environment-inline">,
+                - interp(rhs<span class="not-first-class-functions-inline">, funDefs</span><span
+                    class="environment-inline">,
                     env</span>)</div>
-            <div class="i1 conditionals">case If0(c, t, f) => if (interp(c<span class="functions-inline">,
+            <div class="i1 conditionals">case If0(c, t, f) => if (interp(c<span
+                    class="not-first-class-functions-inline">,
                     funDefs</span><span class="environment-inline">,
                     env</span>) == 0)</div>
-            <div class="i2 conditionals">interp(t<span class="functions-inline">, funDefs</span><span
+            <div class="i2 conditionals">interp(t<span class="not-first-class-functions-inline">, funDefs</span><span
                     class="environment-inline">,
-                    env</span>) else interp(f<span class="functions-inline">, funDefs</span><span
+                    env</span>) else interp(f<span class="not-first-class-functions-inline">, funDefs</span><span
                     class="environment-inline">,
                     env</span>)</div>
             <div class="i1 let">case Id(name) => <span class="substitutionNaive-inline">sys.error(s"found unbound id
@@ -98,19 +101,19 @@
                     funDefs</span><span class="eager">))</span>)</div>
             <div class="i2 environment">val newEnv = env + (id -> interp(expr,
                 funDefs, env))</div>
-            <div class="i2 let">interp(body<span class="functions-inline">, funDefs</span><span
+            <div class="i2 let">interp(body<span class="not-first-class-functions-inline">, funDefs</span><span
                     class="environment-inline">, newEnv</span>)</div>
             <div class="i1 functions">case App(funName, arg) => funDefs(funName) match {</div>
             <div class="i2 functions">case FunDef(param, body) =></div>
 
 
-            <div class="i3 substitutionNaive">val body = subst(boundExpr,
-                boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
+            <div class="i3 substitutionNaive">val body = subst(body,
+                param, <span class="eager">Num(interp(</span>arg<span class="eager-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
             <div class="i3 environment">val funEnv = <span class="dynamicScope">env + </span><span
                     class="staticScope">Map</span>(param -> interp(arg, funDefs, env))</div>
 
-            <div class="i3 functions">interp(body<span class="functions-inline">, funDefs</span><span
+            <div class="i3 functions">interp(body<span class="not-first-class-functions-inline">, funDefs</span><span
                     class="environment-inline">, funEnv</span>)</div>
             <div class="i1 functions">}</div>
             <div>}</div>

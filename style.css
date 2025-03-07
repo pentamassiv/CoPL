@@ -84,13 +84,13 @@ footer {
 .substitutionSimple-inline,
 .substitutionCaptureAvoiding,
 .substitutionCaptureAvoiding-inline,
-.functions-inline,
 .call-by-value,
 .eager-functions-inline,
 .environment,
 .environment-inline,
 .staticScope,
 .dynamicScope,
+.higher-order-functions,
 .first-class-functions,
 .first-class-functions-inline,
 .not-first-class-functions-inline {
@@ -167,11 +167,6 @@ body:has(#toggleFunctions:checked) .functions {
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleFunctions:checked) .functions-inline {
-    display: inline;
-    animation: highlight 10s forwards;
-}
-
 body:has(#toggleLetEager:checked):has(#toggleFunctions:checked) .eager-functions-inline {
     display: inline;
     animation: highlight 10s forwards;
@@ -192,14 +187,19 @@ body:has(#toggleScopeStatic:checked) .staticScope {
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleFirstClass:checked) .first-class-functions {
-    display: block;
+body:has(#toggleHigherOrder:checked) .higher-order-functions {
+    display: inline;
     animation: highlight 10s forwards;
 }
 
 body:has(#toggleHigherOrder:checked) .not-first-class-functions-inline,
 body:has(#toggleFirstOrder:checked) .not-first-class-functions-inline {
     display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleFirstClass:checked) .first-class-functions {
+    display: block;
     animation: highlight 10s forwards;
 }
 
