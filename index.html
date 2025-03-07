@@ -76,7 +76,8 @@
         .substitutionCorrect,
         .substitutionSimple,
         .substitutionSimpleSpaces,
-        .functions-inline {
+        .functions-inline,
+        .eager-functions-inline {
             display: none;
         }
 
@@ -95,7 +96,7 @@
             animation: highlight 10s forwards;
         }
 
-        body:has(#toggleEager:checked) .eager {
+        body:has(#toggleLetEager:checked) .eager {
             display: inline;
             animation: highlight 10s forwards;
         }
@@ -140,6 +141,11 @@
             animation: highlight 10s forwards;
         }
 
+        body:has(#toggleLetEager:checked):has(#toggleFunctions:checked) .eager-functions-inline {
+            display: inline;
+            animation: highlight 10s forwards;
+        }
+
 
         /* Keyframes animation: start green and transition to black */
         @keyframes highlight {
@@ -171,8 +177,8 @@
         </div>
         <div class="radio-group let">
             Evaluation<br>
-            <label><input type="radio" name="eagerEval" id="toggleEager" checked> Eager</label><br>
-            <label><input type="radio" name="eagerEval" id="toggleLazy"> Lazy</label><br>
+            <label><input type="radio" name="letEval" id="toggleLetEager"> Eager</label><br>
+            <label><input type="radio" name="letEval" id="toggleLetLazy" checked> Lazy</label><br>
         </div>
 
         <label><input type="checkbox" id="toggleFunctions">Functions</label><br>
@@ -180,6 +186,11 @@
             <label><input type="radio" name="functions" id="toggleFirstOrder" checked> First-Order</label><br>
             <label><input type="radio" name="functions" id="toggleHigherOrder" checked> Higher-Order</label><br>
             <label><input type="radio" name="functions" id="toggleHigherClass" checked> First-Class</label><br>
+        </div>
+        <div class="radio-group functions">
+            Evaluation<br>
+            <label><input type="radio" name="functionsEval" id="toggleFunctionsEager"> Eager</label><br>
+            <label><input type="radio" name="functionsEval" id="toggleFunctionsLazy" checked> Lazy</label><br>
         </div>
     </div>
 
@@ -218,11 +229,14 @@
             <div class="i1 let">case Id(name) => sys.error(s"found unbound id $name")</div>
             <div class="i1 let">case Let(boundId, namedExpr, boundExpr) =></div>
             <div class="i2 let">val body = subst(boundExpr,
-                boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager">))</span>)</div>
+                boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
+                    funDefs</span><span class="eager">))</span>)</div>
             <div class="i2 let">interp(body<span class="functions-inline">, funDefs</span>)</div>
             <div class="i1 functions">case App(funName, arg) => funDefs(funName) match {</div>
             <div class="i2 functions">case FunDef(param, body) =></div>
-            <div class="i3 functions">interp(subst(body, param, Num(interp(arg, funDefs))), funDefs)</div>
+            <div class="i3 functions">interp(subst(body, param, <span
+                    class="eager-functions-inline">Num(interp(</span>arg, funDefs<span
+                    class="eager-functions-inline">))</span>), funDefs)</div>
             <div class="i1 functions">}</div>
             <div>}</div>
         </div>
@@ -252,9 +266,9 @@
             <div class="i2 substitutionSimple">else</div>
             <div class="i2"><span class="substitutionSimpleSpaces">&nbsp;&nbsp;</span>Let(boundId,
                 substNamedExpr, subst(boundExpr, substId, value))</div>
-            <div class="i1">case App(funName, argExprs) =>//TODO: TOGGLE</div>
-            <div class="i2">val newArgs = argExprs.map(ex => subst(ex, substId, value))//TODO: TOGGLE</div>
-            <div class="i2">App(funName, newArgs)//TODO: TOGGLE</div>
+            <div class="i1 functions">case App(funName, argExprs) =>//TODO: TOGGLE</div>
+            <div class="i2 functions">val newArgs = argExprs.map(ex => subst(ex, substId, value))//TODO: TOGGLE</div>
+            <div class="i2 functions">App(funName, newArgs)//TODO: TOGGLE</div>
             <div>}</div>
         </div>
 
@@ -275,8 +289,8 @@
             <div class="i3">val freshId = Id(freshName(param, potentialConflicts))</div>
             <div class="i3">val alphaRenamed = subst(body, param, freshId)</div>
             <div class="i3">Fun(freshId.name, subst(alphaRenamed, substId, value))</div>
-            <div class="i1">case App(funExpr, argExpr) =></div>
-            <div class="i2">App(subst(funExpr, substId, value), subst(argExpr, substId, value))</div>
+            <div class="i1 functions">case App(funExpr, argExpr) =></div>
+            <div class="i2 functions">App(subst(funExpr, substId, value), subst(argExpr, substId, value))</div>
             <div>}</div>
             <br>
 
@@ -291,7 +305,7 @@
             <div class="i1">case Let(name, namedExpr, body) => (freeVars(namedExpr) - name) union freeVars(body)</div>
             <div class="i1">case Id(x) => Set(x)</div>
             <div class="i1">case Fun(param, body) => freeVariables(body) - param //TODO: TOGGLE</div>
-            <div class="i1">case App(e1, e2) => freeVariables(e1) ++ freeVariables(e2) //TODO: TOGGLE</div>
+            <div class="i1 functions">case App(e1, e2) => freeVariables(e1) ++ freeVariables(e2) //TODO: TOGGLE</div>
             <div>}</div>
             <br>
 
