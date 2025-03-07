@@ -70,15 +70,13 @@
             opacity: 0;
         }
 
-        .substitutionFlawed,
-        .substitutionCorrect {
-            display: none;
-        }
-
         .eager,
         .substitute,
+        .substitutionFlawed,
+        .substitutionCorrect,
         .substitutionSimple,
-        .substitutionSimpleSpaces {
+        .substitutionSimpleSpaces,
+        .functions-inline {
             display: none;
         }
 
@@ -137,6 +135,12 @@
             animation: highlight 10s forwards;
         }
 
+        body:has(#toggleFunctions:checked) .functions-inline {
+            display: inline;
+            animation: highlight 10s forwards;
+        }
+
+
         /* Keyframes animation: start green and transition to black */
         @keyframes highlight {
             0% {
@@ -194,19 +198,32 @@
             <div class="i1 conditionals">case class If0(c: Expr, t: Expr, f: Expr) extends Expr</div>
             <div class="i1 let">case class Let(name: String, bound: Expr, body: Expr) extends Expr</div>
             <div class="i1 let">case class Id(name: String) extends Expr</div>
+            <div class="i1 functions">case class App(funName: String, arg: Expr) extends Expr</div>
         </div>
 
         <h2>Interpreter</h2>
         <div class="code-container">
-            <div>def interp(expr: Expr): Value = expr match {</div>
+            <div>def interp(expr: Expr<span class="functions-inline">, funDefs: Map[String, FunDef]</span>): Value =
+                expr match
+                {</div>
             <div class="i1">case Num(n) => n</div>
-            <div class="i1 arithmetic">case Add(lhs, rhs) => interp(lhs) + interp(rhs)</div>
-            <div class="i1 arithmetic">case Sub(lhs, rhs) => interp(lhs) - interp(rhs)</div>
-            <div class="i1 conditionals">case If0(c, t, f) => if (interp(c) == 0)</div>
-            <div class="i2 conditionals">interp(t) else interp(f)</div>
+            <div class="i1 arithmetic">case Add(lhs, rhs) => interp(lhs<span class="functions-inline">, funDefs</span>)
+                + interp(rhs<span class="functions-inline">, funDefs</span>)</div>
+            <div class="i1 arithmetic">case Sub(lhs, rhs) => interp(lhs<span class="functions-inline">, funDefs</span>)
+                - interp(rhs<span class="functions-inline">, funDefs</span>)</div>
+            <div class="i1 conditionals">case If0(c, t, f) => if (interp(c<span class="functions-inline">,
+                    funDefs</span>) == 0)</div>
+            <div class="i2 conditionals">interp(t<span class="functions-inline">, funDefs</span>) else interp(f<span
+                    class="functions-inline">, funDefs</span>)</div>
             <div class="i1 let">case Id(name) => sys.error(s"found unbound id $name")</div>
-            <div class="i1 let">case Let(boundId, namedExpr, boundExpr) => interp(subst(boundExpr,
-                boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager">)</span>)))</div>
+            <div class="i1 let">case Let(boundId, namedExpr, boundExpr) =></div>
+            <div class="i2 let">val body = subst(boundExpr,
+                boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager">))</span>)</div>
+            <div class="i2 let">interp(body<span class="functions-inline">, funDefs</span>)</div>
+            <div class="i1 functions">case App(funName, arg) => funDefs(funName) match {</div>
+            <div class="i2 functions">case FunDef(param, body) =></div>
+            <div class="i3 functions">interp(subst(body, param, Num(interp(arg, funDefs))), funDefs)</div>
+            <div class="i1 functions">}</div>
             <div>}</div>
         </div>
 
