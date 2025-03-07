@@ -61,7 +61,7 @@
             <div class="i1 arithmetic">case class Add(lhs: Expr, rhs: Expr) extends Expr</div>
             <div class="i1 arithmetic">case class Sub(lhs: Expr, rhs: Expr) extends Expr</div>
             <div class="i1 conditionals">case class If0(c: Expr, t: Expr, f: Expr) extends Expr</div>
-            <div class="i1 let">case class Let(name: String, bound: Expr, body: Expr) extends Expr</div>
+            <div class="i1 let">case class Let(name: String, namedExpr: Expr, body: Expr) extends Expr</div>
             <div class="i1 let">case class Id(name: String) extends Expr</div>
             <div class="i1 functions">case class App(<span class="first-class-functions-inline">funExpr:
                     Expr</span><span class="not-first-class-functions-inline">funName: String</span>, argExpr: Expr)
@@ -97,9 +97,9 @@
                     env</span>)</div>
             <div class="i1 let">case Id(name) => <span class="substitutionNaive-inline">sys.error(s"found unbound id
                     $name")</span><span class="environment-inline">env(name)</span></div>
-            <div class="i1 let">case Let(boundId, namedExpr, boundExpr) =></div>
-            <div class="i2 substitutionNaive">val body = subst(boundExpr,
-                boundId, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
+            <div class="i1 let">case Let(name, namedExpr, body) =></div>
+            <div class="i2 substitutionNaive">val body = subst(body,
+                name, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
             <div class="i2 environment">val newEnv = env + (id -> interp(expr,
                 funDefs, env))</div>
@@ -142,14 +142,14 @@
                 value), subst(elseBody, substId, value))
             </div>
             <div class="i1">case Id(name) => if substId == name then value else expr</div>
-            <div class="i1">case Let(boundId, namedExpr, boundExpr) =></div>
+            <div class="i1">case Let(name, namedExpr, body) =></div>
             <div class="i2">val substNamedExpr = subst(namedExpr, substId, value)</div>
-            <div class="i2 substitutionSimple">if boundId == substId then</div>
-            <div class="i3 substitutionSimple">Let(boundId, substNamedExpr,
-                boundExpr)</div>
+            <div class="i2 substitutionSimple">if name == substId then</div>
+            <div class="i3 substitutionSimple">Let(name, substNamedExpr,
+                body)</div>
             <div class="i2 substitutionSimple">else</div>
-            <div class="i2"><span class="substitutionSimple-inline">&nbsp;&nbsp;</span>Let(boundId,
-                substNamedExpr, subst(boundExpr, substId, value))</div>
+            <div class="i2"><span class="substitutionSimple-inline">&nbsp;&nbsp;</span>Let(name,
+                substNamedExpr, subst(body, substId, value))</div>
             <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
                     class="not-first-class-functions-inline">funName</span>, argExpr) =></div>
             <div class="i2 functions">val newArg = subst(argExpr, substId, value)</div>
