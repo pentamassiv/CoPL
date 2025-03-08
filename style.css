@@ -207,28 +207,28 @@ body:has(#toggleScopeStatic:checked):has(#toggleHigherOrder:checked):has(#toggle
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleHigherOrder:checked) .higher-order-functions {
+body:has(#toggleHigherOrder:checked):has(#toggleFunctions:checked) .higher-order-functions {
     display: inline;
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleHigherOrder:checked) .not-first-class-functions-inline,
-body:has(#toggleFirstOrder:checked) .not-first-class-functions-inline {
+body:has(#toggleHigherOrder:checked):has(#toggleFunctions:checked) .not-first-class-functions-inline,
+body:has(#toggleFirstOrder:checked):has(#toggleFunctions:checked) .not-first-class-functions-inline {
     display: inline;
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleFirstClass:checked) .first-class-functions {
+body:has(#toggleFirstClass:checked):has(#toggleFunctions:checked) .first-class-functions {
     display: block;
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleFirstClass:checked) .first-class-functions-opacity {
+body:has(#toggleFirstClass:checked):has(#toggleFunctions:checked) .first-class-functions-opacity {
     opacity: 1;
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleFirstClass:checked) .first-class-functions-inline {
+body:has(#toggleFirstClass:checked):has(#toggleFunctions:checked) .first-class-functions-inline {
     display: inline;
     animation: highlight 10s forwards;
 }
@@ -249,7 +249,7 @@ body:has(#toggleFirstClass:checked):has(#toggleEnv:checked):has(#toggleLet:check
 body:has(#toggleScopeDynamic:checked):has(#toggleSubstNaive:checked):has(#toggleLet:checked) .not-implemented,
 body:has(#toggleScopeDynamic:checked):has(#toggleSubstSimple:checked):has(#toggleLet:checked) .not-implemented,
 body:has(#toggleScopeDynamic:checked):has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .not-implemented,
-body:has(#toggleHigherOrder:checked) .not-implemented,
+body:has(#toggleHigherOrder:checked):has(#toggleFunctions:checked) .not-implemented,
 body:has(#toggleScopeDynamic:checked):has(#toggleFirstClass:checked):has(#toggleLet:checked) .not-implemented {
     display: block;
 }
