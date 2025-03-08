@@ -89,11 +89,13 @@ footer {
 .eager-functions-inline,
 .environment,
 .environment-inline,
-.staticScope,
-.dynamicScope,
+.not-first-class-static-scope,
+.not-first-class-dynamic-scope,
 .higher-order-functions,
 .first-class-functions,
 .first-class-functions-inline,
+.first-class-env,
+.first-class-sub,
 .not-first-class-functions-inline {
     display: none;
 }
@@ -178,12 +180,14 @@ body:has(#toggleCallByValue:checked):has(#toggleFunctions:checked) .call-by-valu
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleScopeDynamic:checked) .dynamicScope {
+body:has(#toggleScopeDynamic:checked):has(#toggleFirstOrder:checked):has(#toggleLet:checked) .not-first-class-dynamic-scope,
+body:has(#toggleScopeDynamic:checked):has(#toggleHigherOrder:checked):has(#toggleLet:checked) .not-first-class-dynamic-scope {
     display: inline;
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleScopeStatic:checked) .staticScope {
+body:has(#toggleScopeStatic:checked):has(#toggleFirstOrder:checked):has(#toggleLet:checked) .not-first-class-static-scope,
+body:has(#toggleScopeStatic:checked):has(#toggleHigherOrder:checked):has(#toggleLet:checked) .not-first-class-static-scope {
     display: inline;
     animation: highlight 10s forwards;
 }
@@ -214,11 +218,24 @@ body:has(#toggleFirstClass:checked) .first-class-functions-inline {
     animation: highlight 10s forwards;
 }
 
+body:has(#toggleFirstClass:checked):has(#toggleSubstNaive:checked):has(#toggleLet:checked) .first-class-sub,
+body:has(#toggleFirstClass:checked):has(#toggleSubstSimple:checked):has(#toggleLet:checked) .first-class-sub,
+body:has(#toggleFirstClass:checked):has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .first-class-sub {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleFirstClass:checked):has(#toggleEnv:checked):has(#toggleLet:checked) .first-class-env {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
 /* Display the footer when a combination is not implemented (yet) */
 body:has(#toggleScopeDynamic:checked):has(#toggleSubstNaive:checked):has(#toggleLet:checked) .not-implemented,
 body:has(#toggleScopeDynamic:checked):has(#toggleSubstSimple:checked):has(#toggleLet:checked) .not-implemented,
 body:has(#toggleScopeDynamic:checked):has(#toggleSubstCaptureAvoiding:checked):has(#toggleLet:checked) .not-implemented,
-body:has(#toggleHigherOrder:checked) .not-implemented {
+body:has(#toggleHigherOrder:checked) .not-implemented,
+body:has(#toggleScopeDynamic:checked):has(#toggleFirstClass:checked):has(#toggleLet:checked) .not-implemented {
     display: block;
 }
 

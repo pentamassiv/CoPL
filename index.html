@@ -51,7 +51,10 @@
         <div class="code-container">
             <div>abstract class Value</div>
             <div class="i1">case class VNum(n: Int) extends Value</div>
-            <div class="i1 first-class-functions-opacity">case class VFun(param: String, body: Expr) extends Value</div>
+            <div class="i1 first-class-functions-opacity">case class <span
+                    class="environment-inline">VClosure</span><span class="substitutionNaive-inline">VFun</span>(param:
+                String,
+                body: Expr<span class="environment-inline">, env</span>) extends Value</div>
         </div>
 
         <h2>AST</h2>
@@ -114,8 +117,10 @@
                     class="first-class-functions-inline">interp(funExpr<span class="environment-inline">,
                         env</span>)</span><span class="not-first-class-functions-inline">funDefs(funName)</span> match {
             </div>
-            <div class="i2 functions">case <span class="first-class-functions-inline">VFun</span><span
-                    class="not-first-class-functions-inline">FunDef</span>(param, body) =></div>
+            <div class="i2 functions">case <span class="first-class-sub">VFun</span><span
+                    class="first-class-env">VClosure</span><span
+                    class="not-first-class-functions-inline">FunDef</span>(param, body<span class="first-class-env">,
+                    funEnv</span>) =></div>
 
             <div class="i3 substitutionNaive">val body = subst(body,
                 param, <span class="eager">Num(interp(</span>argExpr<span class="eager-functions-inline">,
@@ -123,14 +128,17 @@
             <div class="i3 environment">val argVal = interp(argExpr<span class="not-first-class-functions-inline">,
                     funDefs</span><span class="environment-inline">,
                     env</span>)</div>
-            <div class="i3 environment">val newEnv = <span class="dynamicScope">env + </span><span
-                    class="staticScope">Map</span>(param -> argVal)</div>
+            <div class="i3 environment">val newEnv = <span class="first-class-env">funEnv + </span><span
+                    class="not-first-class-dynamic-scope">env + </span><span
+                    class="not-first-class-static-scope">Map</span>(param -> argVal)</div>
 
             <div class="i3 functions">interp(body<span class="not-first-class-functions-inline">, funDefs</span><span
                     class="environment-inline">, newEnv</span>)</div>
             <div class="i2 first-class-functions">case v1 => error(s"Expected funct value but got $v1")</div>
             <div class="i1 functions">}</div>
-            <div class="i1 first-class-functions-opacity">case class Fun(param, body) => VFun(param, body)</div>
+            <div class="i1 first-class-functions-opacity">case class Fun(param, body) => <span
+                    class="environment-inline">VClosure</span><span class="substitutionNaive-inline">VFun</span>(param,
+                body<span class="environment-inline">, env</span>)</div>
             <div>}</div>
         </div>
 
