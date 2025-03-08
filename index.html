@@ -192,7 +192,8 @@
             <div>}</div><br>
 
             <!-- freeVariables -->
-            <div>def freeVariables(expr: Expression): Set[String] = expr match {</div>
+            <div class="substitutionCaptureAvoiding">def freeVariables(expr: Expression): Set[String] = expr match {
+            </div>
             <div class="i1 substitutionCaptureAvoiding">case Num(_) => Set.empty</div>
             <div class="i1 substitutionCaptureAvoiding arithmetic">case Add(lhs, rhs) => freeVars(lhs) union
                 freeVars(rhs)</div>
