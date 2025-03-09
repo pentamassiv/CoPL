@@ -53,6 +53,8 @@
             <label for="toggleScopeDynamic"><input type="radio" name="functionsScope"
                     id="toggleScopeDynamic">Dynamic</label><br>
         </div>
+        <label for="toggleRecursion" class="radio-group functions"><input type="checkbox"
+                id="toggleRecursion">Recursion</label><br>
     </div>
 
     <div class="code-section">
@@ -84,7 +86,9 @@
         <h2>Interpreter</h2>
         <div class="code-container">
             <div>def interp(expr: Expr<span class="not-first-class-functions-inline">, funDefs: Map[String,
-                    FunDef]</span><span class="environment-inline">, env: Env</span>): Value =
+                    FunDef]</span><span class="environment-inline">, env: Map[String, </span><span
+                    class="environment-recursion-inline">Box[</span><span class="environment-inline">Value<span
+                        class="environment-recursion-inline">]</span>]</span>): Value =
                 expr match
                 {</div>
             <div class="i1">case Num(n) => n</div>
@@ -115,12 +119,21 @@
             <div class="i2 substitutionNaive">val body = subst(body,
                 name, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
-            <div class="i2 environment">val newEnv = env + (id -> interp(expr<span
+            <div class="i2 environment">val newEnv = env + (id -> <span
+                    class="recursion-inline">Box.Immutable(</span>interp(expr<span
                     class="not-first-class-functions-inline">,
                     funDefs</span><span class="environment-inline">,
-                    env</span>))</div>
+                    env</span>)<span class="recursion-inline">)</span>)</div>
             <div class="i2 let">interp(body<span class="not-first-class-functions-inline">, funDefs</span><span
                     class="environment-inline">, newEnv</span>)</div>
+
+            <div class="i1 first-class-recursion">case LetRec(boundId, namedExpr, boundBody) =></div>
+            <div class="i2 first-class-recursion">val mutableBox = Box.Mutable[Value](Num(-42))</div>
+            <div class="i2 first-class-recursion">val recEnv = env + (boundId -> mutableBox)</div>
+            <div class="i2 first-class-recursion">val namedValue = interp(namedExpr, recEnv)</div>
+            <div class="i2 first-class-recursion">mutableBox.value = namedValue</div>
+            <div class="i2 first-class-recursion">interp(boundBody, recEnv)</div>
+
             <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
                     class="not-first-class-functions-inline">funName</span>, argExpr) => <span
                     class="first-class-functions-inline">interp(funExpr<span class="environment-inline">,
@@ -134,9 +147,11 @@
             <div class="i3 substitutionNaive">val body = subst(body,
                 param, <span class="eager">Num(interp(</span>argExpr<span class="eager-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
-            <div class="i3 environment">val argVal = interp(argExpr<span class="not-first-class-functions-inline">,
+            <div class="i3 environment">val argVal = <span
+                    class="environment-recursion-inline">Box.Immutable(</span>interp(argExpr<span
+                    class="not-first-class-functions-inline">,
                     funDefs</span><span class="environment-inline">,
-                    env</span>)</div>
+                    env</span>)<span class="environment-recursion-inline">)</span></div>
             <div class="i3 environment">val newEnv = <span class="first-class-env">funEnv + </span><span
                     class="not-first-class-dynamic-scope">env + </span><span
                     class="not-first-class-static-scope">Map</span>(param -> argVal)</div>

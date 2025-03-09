@@ -104,6 +104,7 @@ footer {
 .eager-functions-inline,
 .environment,
 .environment-inline,
+.environment-recursion-inline,
 .not-first-class-static-scope,
 .not-first-class-dynamic-scope,
 .higher-order-functions,
@@ -111,7 +112,9 @@ footer {
 .first-class-functions-inline,
 .first-class-env,
 .first-class-sub,
-.not-first-class-functions-inline {
+.not-first-class-functions-inline,
+.first-class-recursion,
+.recursion-inline {
     display: none;
 }
 
@@ -241,6 +244,21 @@ body:has(#toggleFirstClass:checked):has(#toggleSubstCaptureAvoiding:checked):has
 }
 
 body:has(#toggleFirstClass:checked):has(#toggleEnv:checked):has(#toggleLet:checked) .first-class-env {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleEnv:checked):has(#toggleRecursion:checked) .environment-recursion-inline {
+    display: inline;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleRecursion:checked):has(#toggleFirstClass:checked):has(#toggleLet:checked) .first-class-recursion {
+    display: block;
+    animation: highlight 10s forwards;
+}
+
+body:has(#toggleRecursion:checked) .recursion-inline {
     display: inline;
     animation: highlight 10s forwards;
 }
