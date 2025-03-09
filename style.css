@@ -102,6 +102,7 @@ footer {
 .substitutionCaptureAvoiding-inline,
 .call-by-value,
 .eager-functions-inline,
+.eager-not-first-class-functions-inline,
 .environment,
 .environment-inline,
 .environment-recursion-inline,
@@ -188,7 +189,8 @@ body:has(#toggleFunctions:checked) .functions {
     animation: highlight 10s forwards;
 }
 
-body:has(#toggleLetEager:checked):has(#toggleFunctions:checked) .eager-functions-inline {
+body:has(#toggleLetEager:checked):has(#toggleFunctions:checked):has(#toggleFirstOrder:checked) .eager-not-first-class-functions-inline,
+body:has(#toggleLetEager:checked):has(#toggleFunctions:checked):has(#toggleHigherOrder:checked) .eager-not-first-class-functions-inline {
     display: inline;
     animation: highlight 10s forwards;
 }

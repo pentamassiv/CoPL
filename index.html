@@ -117,7 +117,8 @@
                 $name")<span class="environment-inline">)</span></div>
             <div class="i1 let">case Let(name, namedExpr, body) =></div>
             <div class="i2 substitutionNaive">val body = subst(body,
-                name, <span class="eager">Num(interp(</span>namedExpr<span class="eager-functions-inline">,
+                name, <span class="eager">Num(interp(</span>namedExpr<span
+                    class="eager-not-first-class-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
             <div class="i2 environment">val newEnv = env + (id -> <span
                     class="recursion-inline">Box.Immutable(</span>interp(expr<span
@@ -127,12 +128,30 @@
             <div class="i2 let">interp(body<span class="not-first-class-functions-inline">, funDefs</span><span
                     class="environment-inline">, newEnv</span>)</div>
 
-            <div class="i1 first-class-recursion">case LetRec(boundId, namedExpr, boundBody) =></div>
-            <div class="i2 first-class-recursion">val mutableBox = Box.Mutable[Value](Num(-42))</div>
-            <div class="i2 first-class-recursion">val recEnv = env + (boundId -> mutableBox)</div>
-            <div class="i2 first-class-recursion">val namedValue = interp(namedExpr, recEnv)</div>
-            <div class="i2 first-class-recursion">mutableBox.value = namedValue</div>
-            <div class="i2 first-class-recursion">interp(boundBody, recEnv)</div>
+            <div class="i1 first-class-recursion">case LetRec(name, namedExpr, body) =></div>
+            <div class="i2 first-class-recursion"><span class="substitutionNaive-inline">val recExpr = LetRec(name,
+                    namedExpr, Id(name))</span><span class="environment-inline">val mutableBox =
+                    Box.Mutable[Value](Num(-42))</span></div>
+
+            <div class="i2 first-class-recursion"><span class="substitutionNaive-inline">val transformedNamedExpr =
+                    subst(namedExpr, name, recExpr)</span><span class="environment-inline">val recEnv = env +
+                    (name -> mutableBox)</span></div>
+            <div class="i2 first-class-recursion"><span class="substitutionNaive-inline">val body = subst(body,
+                    name, <span class="eager">Num(interp(</span>transformedNamedExpr<span
+                        class="eager-not-first-class-functions-inline">,
+                        funDefs</span><span class="eager">))</span>)</span><span class="environment-inline">val
+                    namedValue =
+                    interp(namedExpr, recEnv)</span></div>
+            <div class="i2 first-class-recursion"><span class="environment-inline">mutableBox.value = namedValue</span>
+            </div>
+            <div class="i2 first-class-recursion">interp(body<span class="environment-inline">, recEnv</span>)
+            </div>
+
+
+            <div class="i2 first-class-recursion"></div>
+            <div class="i2 first-class-recursion"></div>
+            <div class="i2 first-class-recursion"></div>
+            <div class="i2 first-class-recursion"></div>
 
             <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
                     class="not-first-class-functions-inline">funName</span>, argExpr) => <span
@@ -145,7 +164,8 @@
                     funEnv</span>) =></div>
 
             <div class="i3 substitutionNaive">val body = subst(body,
-                param, <span class="eager">Num(interp(</span>argExpr<span class="eager-functions-inline">,
+                param, <span class="eager">Num(interp(</span>argExpr<span
+                    class="eager-not-first-class-functions-inline">,
                     funDefs</span><span class="eager">))</span>)</div>
             <div class="i3 environment">val argVal = <span
                     class="environment-recursion-inline">Box.Immutable(</span>interp(argExpr<span
@@ -193,6 +213,14 @@
             <div class="i2 substitutionSimple">else</div>
             <div class="i2"><span class="substitutionSimple-inline">&nbsp;&nbsp;</span>Let(name,
                 substNamedExpr, subst(body, substId, value))</div>
+
+            <div class="i1 first-class-recursion">case LetRec(name, namedExpr, body) =></div>
+            <div class="i2 first-class-recursion">if name == substId then</div>
+            <div class="i3 first-class-recursion">LetRec(name, namedExpr, body)</div>
+            <div class="i2 first-class-recursion">else</div>
+            <div class="i3 first-class-recursion">LetRec(name, subst(namedExpr, substId, value), subst(body,
+                substId,
+                value))</div>
             <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
                     class="not-first-class-functions-inline">funName</span>, argExpr) =></div>
             <div class="i2 functions">val newArg = subst(argExpr, substId, value)</div>
@@ -224,15 +252,17 @@
             <div class="i1 substitutionCaptureAvoiding arithmetic">case Sub(lhs, rhs) => freeVars(lhs) union
                 freeVars(rhs)</div>
             <div class="i1 substitutionCaptureAvoiding conditionals">case If0(c, t, f) => ??? // TODO</div>
+            <div class="i1 substitutionCaptureAvoiding">case Id(name) => Set(name)</div>
             <div class="i1 substitutionCaptureAvoiding">case Let(name, namedExpr, body) => (freeVars(namedExpr) - name)
                 union freeVars(body)</div>
-            <div class="i1 substitutionCaptureAvoiding">case Id(name) => Set(name)</div>
+            <div class="i1 substitutionCaptureAvoiding"><span class="first-class-recursion">case LetRec(name, namedExpr,
+                    body) => ??? // TODO</span></div>
             <div class="i1 substitutionCaptureAvoiding functions">case App(<span
                     class="first-class-functions-inline">funExpr</span><span
                     class="not-first-class-functions-inline">funName</span>, argExpr) => <span
                     class="first-class-functions-inline">freeVariables(funExpr) ++ </span>freeVariables(argExpr)</div>
-            <div class="i1 first-class-functions-opacity">case Fun(param, body) =>
-                freeVariables(body) - param</div>
+            <div class="i1 substitutionCaptureAvoiding"><span class="first-class-functions-opacity">case Fun(param,
+                    body) => freeVariables(body) - param</span></div>
             <div class="substitutionCaptureAvoiding">}</div>
             <br>
 
