@@ -46,21 +46,6 @@ footer {
     font-weight: bold;
 }
 
-.github-corner {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
-    z-index: 1000;
-}
-
-.github-corner img {
-    width: 100%;
-    height: 100%;
-    filter: brightness(0) saturate(100%);
-}
-
 .i1 {
     margin-left: 2ch;
 }
