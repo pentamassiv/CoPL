@@ -8,272 +8,290 @@
 </head>
 
 <body>
-    <!-- Interpreter options -->
-    <div class="options-panel">
-        <h3>Options</h3>
-        <label for="toggleArithmetic"><input type="checkbox" id="toggleArithmetic">Arithmetic Expressions</label><br>
-        <label for="toggleConditionals"><input type="checkbox" id="toggleConditionals">Conditionals</label><br>
-        <label for="toggleLet"><input type="checkbox" id="toggleLet">Identifiers (Let + Id)</label><br>
 
-        <div class="radio-group let"><span>Id</span><br>
-            <label for="toggleSubstNaive"><input type="radio" name="substitution" id="toggleSubstNaive" checked>Naive
-                Substitution</label><br>
-            <label for="toggleSubstSimple"><input type="radio" name="substitution" id="toggleSubstSimple">Simple
-                Substitution</label><br>
-            <label for="toggleSubstCaptureAvoiding"><input type="radio" name="substitution"
-                    id="toggleSubstCaptureAvoiding">Capture-Avoiding Substitution</label><br>
-            <label for="toggleEnv"><input type="radio" name="substitution" id="toggleEnv">Environment</label><br>
+    <div class="layout-grid">
+        <!-- Interpreter options -->
+        <div class="options-panel">
+            <h3>Options</h3>
+            <label for="toggleArithmetic"><input type="checkbox" id="toggleArithmetic">Arithmetic
+                Expressions</label><br>
+            <label for="toggleConditionals"><input type="checkbox" id="toggleConditionals">Conditionals</label><br>
+            <label for="toggleLet"><input type="checkbox" id="toggleLet">Identifiers (Let + Id)</label><br>
+
+            <div class="radio-group let"><span>Id</span><br>
+                <label for="toggleSubstNaive"><input type="radio" name="substitution" id="toggleSubstNaive"
+                        checked>Naive
+                    Substitution</label><br>
+                <label for="toggleSubstSimple"><input type="radio" name="substitution" id="toggleSubstSimple">Simple
+                    Substitution</label><br>
+                <label for="toggleSubstCaptureAvoiding"><input type="radio" name="substitution"
+                        id="toggleSubstCaptureAvoiding">Capture-Avoiding Substitution</label><br>
+                <label for="toggleEnv"><input type="radio" name="substitution" id="toggleEnv">Environment</label><br>
+            </div>
+
+            <div class="radio-group let"><span>Substitution</span><br>
+                <label for="toggleLetEager"><input type="radio" name="letEval" id="toggleLetEager">Eager</label><br>
+                <label for="toggleLetLazy"><input type="radio" name="letEval" id="toggleLetLazy"
+                        checked>Lazy</label><br>
+            </div>
+
+            <label for="toggleFunctions"><input type="checkbox" id="toggleFunctions">Functions</label><br>
+            <div class="radio-group functions">
+                <label for="toggleFirstOrder"><input type="radio" name="functions" id="toggleFirstOrder"
+                        checked>First-Order</label><br>
+                <label for="toggleHigherOrder"><input type="radio" name="functions"
+                        id="toggleHigherOrder">Higher-Order</label><br>
+                <label for="toggleFirstClass"><input type="radio" name="functions"
+                        id="toggleFirstClass">First-Class</label><br>
+            </div>
+
+            <div class="radio-group functions"><span>Call-by // TODO</span><br>
+                <label for="toggleCallByValue"><input type="radio" name="functionsEval"
+                        id="toggleCallByValue">Value</label><br>
+                <label for="toggleCallByName"><input type="radio" name="functionsEval" id="toggleCallByName"
+                        checked>Name</label><br>
+            </div>
+
+            <div class="radio-group functions"><span>Scope</span><br>
+                <label for="toggleScopeStatic"><input type="radio" name="functionsScope" id="toggleScopeStatic"
+                        checked>Static</label><br>
+                <label for="toggleScopeDynamic"><input type="radio" name="functionsScope"
+                        id="toggleScopeDynamic">Dynamic</label><br>
+            </div>
+            <label for="toggleRecursion" class="radio-group functions"><input type="checkbox"
+                    id="toggleRecursion">Recursion</label><br>
         </div>
 
-        <div class="radio-group let"><span>Substitution</span><br>
-            <label for="toggleLetEager"><input type="radio" name="letEval" id="toggleLetEager">Eager</label><br>
-            <label for="toggleLetLazy"><input type="radio" name="letEval" id="toggleLetLazy" checked>Lazy</label><br>
-        </div>
+        <div class="code-section">
+            <h2>Values</h2>
+            <div class="code-container">
+                <div>abstract class Value</div>
+                <div class="i1">case class VNum(n: Int) extends Value</div>
+                <div class="i1 first-class-functions-opacity">case class <span
+                        class="environment-inline">VClosure</span><span
+                        class="substitutionNaive-inline">VFun</span>(param:
+                    String,
+                    body: Expr<span class="environment-inline">, env</span>) extends Value</div>
+            </div>
 
-        <label for="toggleFunctions"><input type="checkbox" id="toggleFunctions">Functions</label><br>
-        <div class="radio-group functions">
-            <label for="toggleFirstOrder"><input type="radio" name="functions" id="toggleFirstOrder"
-                    checked>First-Order</label><br>
-            <label for="toggleHigherOrder"><input type="radio" name="functions"
-                    id="toggleHigherOrder">Higher-Order</label><br>
-            <label for="toggleFirstClass"><input type="radio" name="functions"
-                    id="toggleFirstClass">First-Class</label><br>
-        </div>
+            <h2>AST</h2>
+            <div class="code-container">
+                <div>abstract class Expr</div>
+                <div class="i1">case class Num(n: Int) extends Expr</div>
+                <div class="i1 arithmetic">case class Add(lhs: Expr, rhs: Expr) extends Expr</div>
+                <div class="i1 arithmetic">case class Sub(lhs: Expr, rhs: Expr) extends Expr</div>
+                <div class="i1 conditionals">case class If0(c: Expr, t: Expr, f: Expr) extends Expr</div>
+                <div class="i1 let">case class Let(name: String, namedExpr: Expr, body: Expr) extends Expr</div>
+                <div class="i1 let">case class Id(name: String) extends Expr</div>
+                <div class="i1 functions">case class App(<span class="first-class-functions-inline">funExpr:
+                        Expr</span><span class="not-first-class-functions-inline">funName: String</span>, argExpr: Expr)
+                    extends Expr</div>
+                <div class="i1 first-class-functions-opacity">case class Fun(param: String, body: FLAE) extends Expr
+                </div>
+            </div>
 
-        <div class="radio-group functions"><span>Call-by // TODO</span><br>
-            <label for="toggleCallByValue"><input type="radio" name="functionsEval"
-                    id="toggleCallByValue">Value</label><br>
-            <label for="toggleCallByName"><input type="radio" name="functionsEval" id="toggleCallByName"
-                    checked>Name</label><br>
-        </div>
-
-        <div class="radio-group functions"><span>Scope</span><br>
-            <label for="toggleScopeStatic"><input type="radio" name="functionsScope" id="toggleScopeStatic"
-                    checked>Static</label><br>
-            <label for="toggleScopeDynamic"><input type="radio" name="functionsScope"
-                    id="toggleScopeDynamic">Dynamic</label><br>
-        </div>
-        <label for="toggleRecursion" class="radio-group functions"><input type="checkbox"
-                id="toggleRecursion">Recursion</label><br>
-    </div>
-
-    <div class="code-section">
-        <h2>Values</h2>
-        <div class="code-container">
-            <div>abstract class Value</div>
-            <div class="i1">case class VNum(n: Int) extends Value</div>
-            <div class="i1 first-class-functions-opacity">case class <span
-                    class="environment-inline">VClosure</span><span class="substitutionNaive-inline">VFun</span>(param:
-                String,
-                body: Expr<span class="environment-inline">, env</span>) extends Value</div>
-        </div>
-
-        <h2>AST</h2>
-        <div class="code-container">
-            <div>abstract class Expr</div>
-            <div class="i1">case class Num(n: Int) extends Expr</div>
-            <div class="i1 arithmetic">case class Add(lhs: Expr, rhs: Expr) extends Expr</div>
-            <div class="i1 arithmetic">case class Sub(lhs: Expr, rhs: Expr) extends Expr</div>
-            <div class="i1 conditionals">case class If0(c: Expr, t: Expr, f: Expr) extends Expr</div>
-            <div class="i1 let">case class Let(name: String, namedExpr: Expr, body: Expr) extends Expr</div>
-            <div class="i1 let">case class Id(name: String) extends Expr</div>
-            <div class="i1 functions">case class App(<span class="first-class-functions-inline">funExpr:
-                    Expr</span><span class="not-first-class-functions-inline">funName: String</span>, argExpr: Expr)
-                extends Expr</div>
-            <div class="i1 first-class-functions-opacity">case class Fun(param: String, body: FLAE) extends Expr</div>
-        </div>
-
-        <h2>Interpreter</h2>
-        <div class="code-container">
-            <div>def interp(expr: Expr<span class="not-first-class-functions-inline">, funDefs: Map[String,
-                    FunDef]</span><span class="environment-inline">, env: Map[String, </span><span
-                    class="environment-recursion-inline">Box[</span><span class="environment-inline">Value<span
-                        class="environment-recursion-inline">]</span>]</span>): Value =
-                expr match
-                {</div>
-            <div class="i1">case Num(n) => n</div>
-            <div class="i1 arithmetic">case Add(lhs, rhs) => interp(lhs<span class="not-first-class-functions-inline">,
-                    funDefs</span><span class="environment-inline">, env</span>)
-                + interp(rhs<span class="not-first-class-functions-inline">, funDefs</span><span
-                    class="environment-inline">,
-                    env</span>)</div>
-            <div class="i1 arithmetic">case Sub(lhs, rhs) => interp(lhs<span class="not-first-class-functions-inline">,
-                    funDefs</span><span class="environment-inline">,
-                    env</span>)
-                - interp(rhs<span class="not-first-class-functions-inline">, funDefs</span><span
-                    class="environment-inline">,
-                    env</span>)</div>
-            <div class="i1 conditionals">case If0(c, t, f) => if (interp(c<span
-                    class="not-first-class-functions-inline">,
-                    funDefs</span><span class="environment-inline">,
-                    env</span>) == 0)</div>
-            <div class="i2 conditionals">interp(t<span class="not-first-class-functions-inline">, funDefs</span><span
-                    class="environment-inline">,
-                    env</span>) else interp(f<span class="not-first-class-functions-inline">, funDefs</span><span
-                    class="environment-inline">,
-                    env</span>)</div>
-            <div class="i1 let">case Id(name) => <span class="environment-inline">env.getOrElse(name,
-                </span>sys.error(s"unbound variable
-                $name")<span class="environment-inline">)</span></div>
-            <div class="i1 let">case Let(name, namedExpr, body) =></div>
-            <div class="i2 substitutionNaive">val body = subst(body,
-                name, <span class="eager">Num(interp(</span>namedExpr<span
-                    class="eager-not-first-class-functions-inline">,
-                    funDefs</span><span class="eager">))</span>)</div>
-            <div class="i2 environment">val newEnv = env + (id -> <span
-                    class="recursion-inline">Box.Immutable(</span>interp(expr<span
-                    class="not-first-class-functions-inline">,
-                    funDefs</span><span class="environment-inline">,
-                    env</span>)<span class="recursion-inline">)</span>)</div>
-            <div class="i2 let">interp(body<span class="not-first-class-functions-inline">, funDefs</span><span
-                    class="environment-inline">, newEnv</span>)</div>
-
-            <div class="i1 first-class-recursion">case LetRec(name, namedExpr, body) =></div>
-            <div class="i2 first-class-recursion"><span class="substitutionNaive-inline">val recExpr = LetRec(name,
-                    namedExpr, Id(name))</span><span class="environment-inline">val mutableBox =
-                    Box.Mutable[Value](Num(-42))</span></div>
-
-            <div class="i2 first-class-recursion"><span class="substitutionNaive-inline">val transformedNamedExpr =
-                    subst(namedExpr, name, recExpr)</span><span class="environment-inline">val recEnv = env +
-                    (name -> mutableBox)</span></div>
-            <div class="i2 first-class-recursion"><span class="substitutionNaive-inline">val body = subst(body,
-                    name, <span class="eager">Num(interp(</span>transformedNamedExpr<span
+            <h2>Interpreter</h2>
+            <div class="code-container">
+                <div>def interp(expr: Expr<span class="not-first-class-functions-inline">, funDefs: Map[String,
+                        FunDef]</span><span class="environment-inline">, env: Map[String, </span><span
+                        class="environment-recursion-inline">Box[</span><span class="environment-inline">Value<span
+                            class="environment-recursion-inline">]</span>]</span>): Value =
+                    expr match
+                    {</div>
+                <div class="i1">case Num(n) => n</div>
+                <div class="i1 arithmetic">case Add(lhs, rhs) => interp(lhs<span
+                        class="not-first-class-functions-inline">,
+                        funDefs</span><span class="environment-inline">, env</span>)
+                    + interp(rhs<span class="not-first-class-functions-inline">, funDefs</span><span
+                        class="environment-inline">,
+                        env</span>)</div>
+                <div class="i1 arithmetic">case Sub(lhs, rhs) => interp(lhs<span
+                        class="not-first-class-functions-inline">,
+                        funDefs</span><span class="environment-inline">,
+                        env</span>)
+                    - interp(rhs<span class="not-first-class-functions-inline">, funDefs</span><span
+                        class="environment-inline">,
+                        env</span>)</div>
+                <div class="i1 conditionals">case If0(c, t, f) => if (interp(c<span
+                        class="not-first-class-functions-inline">,
+                        funDefs</span><span class="environment-inline">,
+                        env</span>) == 0)</div>
+                <div class="i2 conditionals">interp(t<span class="not-first-class-functions-inline">,
+                        funDefs</span><span class="environment-inline">,
+                        env</span>) else interp(f<span class="not-first-class-functions-inline">, funDefs</span><span
+                        class="environment-inline">,
+                        env</span>)</div>
+                <div class="i1 let">case Id(name) => <span class="environment-inline">env.getOrElse(name,
+                    </span>sys.error(s"unbound variable
+                    $name")<span class="environment-inline">)</span></div>
+                <div class="i1 let">case Let(name, namedExpr, body) =></div>
+                <div class="i2 substitutionNaive">val body = subst(body,
+                    name, <span class="eager">Num(interp(</span>namedExpr<span
                         class="eager-not-first-class-functions-inline">,
-                        funDefs</span><span class="eager">))</span>)</span><span class="environment-inline">val
-                    namedValue =
-                    interp(namedExpr, recEnv)</span></div>
-            <div class="i2 first-class-recursion"><span class="environment-inline">mutableBox.value = namedValue</span>
+                        funDefs</span><span class="eager">))</span>)</div>
+                <div class="i2 environment">val newEnv = env + (id -> <span
+                        class="recursion-inline">Box.Immutable(</span>interp(expr<span
+                        class="not-first-class-functions-inline">,
+                        funDefs</span><span class="environment-inline">,
+                        env</span>)<span class="recursion-inline">)</span>)</div>
+                <div class="i2 let">interp(body<span class="not-first-class-functions-inline">, funDefs</span><span
+                        class="environment-inline">, newEnv</span>)</div>
+
+                <div class="i1 first-class-recursion">case LetRec(name, namedExpr, body) =></div>
+                <div class="i2 first-class-recursion"><span class="substitutionNaive-inline">val recExpr = LetRec(name,
+                        namedExpr, Id(name))</span><span class="environment-inline">val mutableBox =
+                        Box.Mutable[Value](Num(-42))</span></div>
+
+                <div class="i2 first-class-recursion"><span class="substitutionNaive-inline">val transformedNamedExpr =
+                        subst(namedExpr, name, recExpr)</span><span class="environment-inline">val recEnv = env +
+                        (name -> mutableBox)</span></div>
+                <div class="i2 first-class-recursion"><span class="substitutionNaive-inline">val body = subst(body,
+                        name, <span class="eager">Num(interp(</span>transformedNamedExpr<span
+                            class="eager-not-first-class-functions-inline">,
+                            funDefs</span><span class="eager">))</span>)</span><span class="environment-inline">val
+                        namedValue =
+                        interp(namedExpr, recEnv)</span></div>
+                <div class="i2 first-class-recursion"><span class="environment-inline">mutableBox.value =
+                        namedValue</span>
+                </div>
+                <div class="i2 first-class-recursion">interp(body<span class="environment-inline">, recEnv</span>)
+                </div>
+
+
+                <div class="i2 first-class-recursion"></div>
+                <div class="i2 first-class-recursion"></div>
+                <div class="i2 first-class-recursion"></div>
+                <div class="i2 first-class-recursion"></div>
+
+                <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
+                        class="not-first-class-functions-inline">funName</span>, argExpr) => <span
+                        class="first-class-functions-inline">interp(funExpr<span class="environment-inline">,
+                            env</span>)</span><span class="not-first-class-functions-inline">funDefs(funName)</span>
+                    match {
+                </div>
+                <div class="i2 functions">case <span class="first-class-sub">VFun</span><span
+                        class="first-class-env">VClosure</span><span
+                        class="not-first-class-functions-inline">FunDef</span>(param, body<span
+                        class="first-class-env">,
+                        funEnv</span>) =></div>
+
+                <div class="i3 substitutionNaive">val body = subst(body,
+                    param, <span class="eager">Num(interp(</span>argExpr<span
+                        class="eager-not-first-class-functions-inline">,
+                        funDefs</span><span class="eager">))</span>)</div>
+                <div class="i3 environment">val argVal = <span
+                        class="environment-recursion-inline">Box.Immutable(</span>interp(argExpr<span
+                        class="not-first-class-functions-inline">,
+                        funDefs</span><span class="environment-inline">,
+                        env</span>)<span class="environment-recursion-inline">)</span></div>
+                <div class="i3 environment">val newEnv = <span class="first-class-env">funEnv + </span><span
+                        class="not-first-class-dynamic-scope">env + </span><span
+                        class="not-first-class-static-scope">Map</span>(param -> argVal)</div>
+
+                <div class="i3 functions">interp(body<span class="not-first-class-functions-inline">,
+                        funDefs</span><span class="environment-inline">, newEnv</span>)</div>
+                <div class="i2 first-class-functions">case v1 => error(s"Expected funct value but got $v1")</div>
+                <div class="i1 functions">}</div>
+                <div class="i1 first-class-functions-opacity">case class Fun(param, body) => <span
+                        class="environment-inline">VClosure</span><span
+                        class="substitutionNaive-inline">VFun</span>(param,
+                    body<span class="environment-inline">, env</span>)</div>
+                <div>}</div>
             </div>
-            <div class="i2 first-class-recursion">interp(body<span class="environment-inline">, recEnv</span>)
+
+            <h2 class="substitutionNaive">Substitute</h2>
+            <div class="code-container substitutionNaive">
+
+                <!-- substitute -->
+                <div>// Substitutes "substId" with "value" in "expr"</div>
+                <div>// The resulting expression contains no free instances of the 2nd argument.</div>
+                <div>def subst(expr: Expr, substId: String, value: Expr): Expr = expr match {</div>
+                <div class="i1">case Num(_) => expr</div>
+                <div class="i1 arithmetic">case Add(lhs, rhs) => Add(subst(lhs, substId, value), subst(rhs,
+                    substId, value))
+                </div>
+                <div class="i1 arithmetic">case Sub(lhs, rhs) => Sub(subst(lhs, substId, value), subst(rhs,
+                    substId, value))
+                </div>
+                <div class="i1 conditionals">case If0(test, thenBody, elseBody) =></div>
+                <div class="i2 conditionals">If0(subst(test, substId, value), subst(thenBody, substId,
+                    value), subst(elseBody, substId, value))
+                </div>
+                <div class="i1">case Id(name) => if substId == name then value else expr</div>
+                <div class="i1">case Let(name, namedExpr, body) =></div>
+                <div class="i2">val substNamedExpr = subst(namedExpr, substId, value)</div>
+                <div class="i2 substitutionSimple">if name == substId then</div>
+                <div class="i3 substitutionSimple">Let(name, substNamedExpr,
+                    body)</div>
+                <div class="i2 substitutionSimple">else</div>
+                <div class="i2"><span class="substitutionSimple-inline">&nbsp;&nbsp;</span>Let(name,
+                    substNamedExpr, subst(body, substId, value))</div>
+
+                <div class="i1 first-class-recursion">case LetRec(name, namedExpr, body) =></div>
+                <div class="i2 first-class-recursion">if name == substId then</div>
+                <div class="i3 first-class-recursion">LetRec(name, namedExpr, body)</div>
+                <div class="i2 first-class-recursion">else</div>
+                <div class="i3 first-class-recursion">LetRec(name, subst(namedExpr, substId, value), subst(body,
+                    substId,
+                    value))</div>
+                <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
+                        class="not-first-class-functions-inline">funName</span>, argExpr) =></div>
+                <div class="i2 functions">val newArg = subst(argExpr, substId, value)</div>
+                <div class="i2 first-class-functions">val newFunExpr = subst(funExpr, substId, value)</div>
+                <div class="i2 functions">App(<span class="first-class-functions-inline">newFunExpr</span><span
+                        class="not-first-class-functions-inline">funName</span>, newArg)</div>
+                <div class="i1">case Fun(param, body) =></div>
+                <div class="i2 substitutionSimple">if param == substId then</div>
+                <div class="i3 substitutionSimple">Fun(param, body)</div>
+                <div class="i2 substitutionSimple">else<span class="substitutionCaptureAvoiding-inline"> if
+                        !freeVariables(value).contains(param) then</span></div>
+                <div class="i2"><span class="substitutionSimple-inline">&nbsp;&nbsp;</span>Fun(param, subst(body,
+                    substId,
+                    value))</div>
+                <div class="i2 substitutionCaptureAvoiding">else</div>
+                <div class="i3 substitutionCaptureAvoiding">val potentialConflicts = freeVariables(value) union
+                    freeVariables(body)
+                </div>
+                <div class="i3 substitutionCaptureAvoiding">val freshId = Id(freshName(param, potentialConflicts))</div>
+                <div class="i3 substitutionCaptureAvoiding">val alphaRenamed = subst(body, param, freshId)</div>
+                <div class="i3 substitutionCaptureAvoiding">Fun(freshId.name, subst(alphaRenamed, substId, value))</div>
+                <div>}</div><br>
+
+                <!-- freeVariables -->
+                <div class="substitutionCaptureAvoiding">def freeVariables(expr: Expression): Set[String] = expr match {
+                </div>
+                <div class="i1 substitutionCaptureAvoiding">case Num(_) => Set.empty</div>
+                <div class="i1 substitutionCaptureAvoiding arithmetic">case Add(lhs, rhs) => freeVars(lhs) union
+                    freeVars(rhs)</div>
+                <div class="i1 substitutionCaptureAvoiding arithmetic">case Sub(lhs, rhs) => freeVars(lhs) union
+                    freeVars(rhs)</div>
+                <div class="i1 substitutionCaptureAvoiding conditionals">case If0(c, t, f) => ??? // TODO</div>
+                <div class="i1 substitutionCaptureAvoiding">case Id(name) => Set(name)</div>
+                <div class="i1 substitutionCaptureAvoiding">case Let(name, namedExpr, body) => (freeVars(namedExpr) -
+                    name)
+                    union freeVars(body)</div>
+                <div class="i1 substitutionCaptureAvoiding"><span class="first-class-recursion">case LetRec(name,
+                        namedExpr,
+                        body) => ??? // TODO</span></div>
+                <div class="i1 substitutionCaptureAvoiding functions">case App(<span
+                        class="first-class-functions-inline">funExpr</span><span
+                        class="not-first-class-functions-inline">funName</span>, argExpr) => <span
+                        class="first-class-functions-inline">freeVariables(funExpr) ++ </span>freeVariables(argExpr)
+                </div>
+                <div class="i1 substitutionCaptureAvoiding"><span class="first-class-functions-opacity">case Fun(param,
+                        body) => freeVariables(body) - param</span></div>
+                <div class="substitutionCaptureAvoiding">}</div>
+                <br>
+
+                <!-- freshName -->
+                <div class="substitutionCaptureAvoiding">def freshName(id: String, known: Set[String]): String =</div>
+                <div class="i1 substitutionCaptureAvoiding">def rec(count: Int): String =</div>
+                <div class="i2 substitutionCaptureAvoiding">val newName = s"$id-$count"</div>
+                <div class="i2 substitutionCaptureAvoiding">if known.contains(newName)</div>
+                <div class="i2 substitutionCaptureAvoiding">then rec(count + 1)</div>
+                <div class="i2 substitutionCaptureAvoiding">else newName</div>
+                <div class="i1 substitutionCaptureAvoiding">rec(0)</div>
             </div>
-
-
-            <div class="i2 first-class-recursion"></div>
-            <div class="i2 first-class-recursion"></div>
-            <div class="i2 first-class-recursion"></div>
-            <div class="i2 first-class-recursion"></div>
-
-            <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
-                    class="not-first-class-functions-inline">funName</span>, argExpr) => <span
-                    class="first-class-functions-inline">interp(funExpr<span class="environment-inline">,
-                        env</span>)</span><span class="not-first-class-functions-inline">funDefs(funName)</span> match {
-            </div>
-            <div class="i2 functions">case <span class="first-class-sub">VFun</span><span
-                    class="first-class-env">VClosure</span><span
-                    class="not-first-class-functions-inline">FunDef</span>(param, body<span class="first-class-env">,
-                    funEnv</span>) =></div>
-
-            <div class="i3 substitutionNaive">val body = subst(body,
-                param, <span class="eager">Num(interp(</span>argExpr<span
-                    class="eager-not-first-class-functions-inline">,
-                    funDefs</span><span class="eager">))</span>)</div>
-            <div class="i3 environment">val argVal = <span
-                    class="environment-recursion-inline">Box.Immutable(</span>interp(argExpr<span
-                    class="not-first-class-functions-inline">,
-                    funDefs</span><span class="environment-inline">,
-                    env</span>)<span class="environment-recursion-inline">)</span></div>
-            <div class="i3 environment">val newEnv = <span class="first-class-env">funEnv + </span><span
-                    class="not-first-class-dynamic-scope">env + </span><span
-                    class="not-first-class-static-scope">Map</span>(param -> argVal)</div>
-
-            <div class="i3 functions">interp(body<span class="not-first-class-functions-inline">, funDefs</span><span
-                    class="environment-inline">, newEnv</span>)</div>
-            <div class="i2 first-class-functions">case v1 => error(s"Expected funct value but got $v1")</div>
-            <div class="i1 functions">}</div>
-            <div class="i1 first-class-functions-opacity">case class Fun(param, body) => <span
-                    class="environment-inline">VClosure</span><span class="substitutionNaive-inline">VFun</span>(param,
-                body<span class="environment-inline">, env</span>)</div>
-            <div>}</div>
-        </div>
-
-        <h2 class="substitutionNaive">Substitute</h2>
-        <div class="code-container substitutionNaive">
-
-            <!-- substitute -->
-            <div>// Substitutes "substId" with "value" in "expr"</div>
-            <div>// The resulting expression contains no free instances of the 2nd argument.</div>
-            <div>def subst(expr: Expr, substId: String, value: Expr): Expr = expr match {</div>
-            <div class="i1">case Num(_) => expr</div>
-            <div class="i1 arithmetic">case Add(lhs, rhs) => Add(subst(lhs, substId, value), subst(rhs,
-                substId, value))
-            </div>
-            <div class="i1 arithmetic">case Sub(lhs, rhs) => Sub(subst(lhs, substId, value), subst(rhs,
-                substId, value))
-            </div>
-            <div class="i1 conditionals">case If0(test, thenBody, elseBody) =></div>
-            <div class="i2 conditionals">If0(subst(test, substId, value), subst(thenBody, substId,
-                value), subst(elseBody, substId, value))
-            </div>
-            <div class="i1">case Id(name) => if substId == name then value else expr</div>
-            <div class="i1">case Let(name, namedExpr, body) =></div>
-            <div class="i2">val substNamedExpr = subst(namedExpr, substId, value)</div>
-            <div class="i2 substitutionSimple">if name == substId then</div>
-            <div class="i3 substitutionSimple">Let(name, substNamedExpr,
-                body)</div>
-            <div class="i2 substitutionSimple">else</div>
-            <div class="i2"><span class="substitutionSimple-inline">&nbsp;&nbsp;</span>Let(name,
-                substNamedExpr, subst(body, substId, value))</div>
-
-            <div class="i1 first-class-recursion">case LetRec(name, namedExpr, body) =></div>
-            <div class="i2 first-class-recursion">if name == substId then</div>
-            <div class="i3 first-class-recursion">LetRec(name, namedExpr, body)</div>
-            <div class="i2 first-class-recursion">else</div>
-            <div class="i3 first-class-recursion">LetRec(name, subst(namedExpr, substId, value), subst(body,
-                substId,
-                value))</div>
-            <div class="i1 functions">case App(<span class="first-class-functions-inline">funExpr</span><span
-                    class="not-first-class-functions-inline">funName</span>, argExpr) =></div>
-            <div class="i2 functions">val newArg = subst(argExpr, substId, value)</div>
-            <div class="i2 first-class-functions">val newFunExpr = subst(funExpr, substId, value)</div>
-            <div class="i2 functions">App(<span class="first-class-functions-inline">newFunExpr</span><span
-                    class="not-first-class-functions-inline">funName</span>, newArg)</div>
-            <div class="i1">case Fun(param, body) =></div>
-            <div class="i2 substitutionSimple">if param == substId then</div>
-            <div class="i3 substitutionSimple">Fun(param, body)</div>
-            <div class="i2 substitutionSimple">else<span class="substitutionCaptureAvoiding-inline"> if
-                    !freeVariables(value).contains(param) then</span></div>
-            <div class="i2"><span class="substitutionSimple-inline">&nbsp;&nbsp;</span>Fun(param, subst(body, substId,
-                value))</div>
-            <div class="i2 substitutionCaptureAvoiding">else</div>
-            <div class="i3 substitutionCaptureAvoiding">val potentialConflicts = freeVariables(value) union
-                freeVariables(body)
-            </div>
-            <div class="i3 substitutionCaptureAvoiding">val freshId = Id(freshName(param, potentialConflicts))</div>
-            <div class="i3 substitutionCaptureAvoiding">val alphaRenamed = subst(body, param, freshId)</div>
-            <div class="i3 substitutionCaptureAvoiding">Fun(freshId.name, subst(alphaRenamed, substId, value))</div>
-            <div>}</div><br>
-
-            <!-- freeVariables -->
-            <div class="substitutionCaptureAvoiding">def freeVariables(expr: Expression): Set[String] = expr match {
-            </div>
-            <div class="i1 substitutionCaptureAvoiding">case Num(_) => Set.empty</div>
-            <div class="i1 substitutionCaptureAvoiding arithmetic">case Add(lhs, rhs) => freeVars(lhs) union
-                freeVars(rhs)</div>
-            <div class="i1 substitutionCaptureAvoiding arithmetic">case Sub(lhs, rhs) => freeVars(lhs) union
-                freeVars(rhs)</div>
-            <div class="i1 substitutionCaptureAvoiding conditionals">case If0(c, t, f) => ??? // TODO</div>
-            <div class="i1 substitutionCaptureAvoiding">case Id(name) => Set(name)</div>
-            <div class="i1 substitutionCaptureAvoiding">case Let(name, namedExpr, body) => (freeVars(namedExpr) - name)
-                union freeVars(body)</div>
-            <div class="i1 substitutionCaptureAvoiding"><span class="first-class-recursion">case LetRec(name, namedExpr,
-                    body) => ??? // TODO</span></div>
-            <div class="i1 substitutionCaptureAvoiding functions">case App(<span
-                    class="first-class-functions-inline">funExpr</span><span
-                    class="not-first-class-functions-inline">funName</span>, argExpr) => <span
-                    class="first-class-functions-inline">freeVariables(funExpr) ++ </span>freeVariables(argExpr)</div>
-            <div class="i1 substitutionCaptureAvoiding"><span class="first-class-functions-opacity">case Fun(param,
-                    body) => freeVariables(body) - param</span></div>
-            <div class="substitutionCaptureAvoiding">}</div>
-            <br>
-
-            <!-- freshName -->
-            <div class="substitutionCaptureAvoiding">def freshName(id: String, known: Set[String]): String =</div>
-            <div class="i1 substitutionCaptureAvoiding">def rec(count: Int): String =</div>
-            <div class="i2 substitutionCaptureAvoiding">val newName = s"$id-$count"</div>
-            <div class="i2 substitutionCaptureAvoiding">if known.contains(newName)</div>
-            <div class="i2 substitutionCaptureAvoiding">then rec(count + 1)</div>
-            <div class="i2 substitutionCaptureAvoiding">else newName</div>
-            <div class="i1 substitutionCaptureAvoiding">rec(0)</div>
         </div>
     </div>
     <a href="https://github.com/pentamassiv/CoPL" class="github-corner" target="_blank">
